@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.List;
 
 @Component
 class DatabaseLoader implements CommandLineRunner {
@@ -35,113 +36,108 @@ class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // User
-        log.info("Preloading {}", userRepository.save(new User(1, "Alice")));
-        log.info("Preloading {}", userRepository.save(new User(2, "Bob")));
-        log.info("Preloading {}", userRepository.save(new User(1, "Eve")));
+        List<User> users = List.of(
+                new User(1, "Alice"),
+                new User(2, "Bob"),
+                new User(1, "Eve")
+        );
+        log.info("Preloading users: {}", userRepository.saveAll(users));
 
         // Unit
-        log.info("Preloading {}", unitRepository.save(new Unit(2, "Kreftregisteret")));
-        log.info("Preloading {}", unitRepository.save(new Unit(1, "Akershus universitetssykehus HF")));
-        log.info("Preloading {}", unitRepository.save(new Unit(2, "Sørlandet sykehus HF")));
-        log.info("Preloading {}", unitRepository.save(new Unit(2, "Vestre Viken HF")));
+        List<Unit> units = List.of(
+            new Unit(2, "Kreftregisteret"),
+            new Unit(1, "Akershus universitetssykehus HF"),
+            new Unit(2, "Sørlandet sykehus HF"),
+            new Unit(2, "Vestre Viken HF")
+        );
+        log.info("Preloading units: {}", unitRepository.saveAll(units));
 
         // Role
-        log.info("Preloading {}", roleRepository.save(new Role(1, "User administration")));
-        log.info("Preloading {}", roleRepository.save(new Role(2, "Endoscopist administration")));
-        log.info("Preloading {}", roleRepository.save(new Role(1, "Report colonoscopy capacity")));
-        log.info("Preloading {}", roleRepository.save(new Role(2, "Send invitations")));
-        log.info("Preloading {}", roleRepository.save(new Role(1, "View statistics")));
+        List<Role> roles = List.of(
+            new Role(1, "User administration"),
+            new Role(2, "Endoscopist administration"),
+            new Role(1, "Report colonoscopy capacity"),
+            new Role(2, "Send invitations"),
+            new Role(1, "View statistics")
+        );
+        log.info("Preloading roles: {}", roleRepository.saveAll(roles));
 
         // User role
-        log.info("Preloading {}", userRoleRepository.save(new UserRole(
+        List<UserRole> userRoles = List.of(
+            new UserRole(
                 1,
-                userRepository.findById(1).orElseThrow(),
-                unitRepository.findById(11).orElseThrow(),
-                roleRepository.findById(101).orElseThrow(),
+                users.get(0),
+                units.get(0),
+                roles.get(1),
                 Instant.parse("2019-01-02T00:00:00+02:00"),
                 Instant.parse("2019-12-31T23:59:59+02:00")
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         2,
-                        userRepository.findById(1).orElseThrow(),
-                        unitRepository.findById(11).orElseThrow(),
-                        roleRepository.findById(104).orElseThrow(),
+                        users.get(0),
+                        units.get(0),
+                        roles.get(3),
                         Instant.parse("2019-01-02T00:00:00+02:00"),
                         Instant.parse("2019-12-31T23:59:59+02:00")
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         1,
-                        userRepository.findById(1).orElseThrow(),
-                        unitRepository.findById(11).orElseThrow(),
-                        roleRepository.findById(105).orElseThrow(),
+                        users.get(0),
+                        units.get(0),
+                        roles.get(4),
                         Instant.parse("2019-06-11T00:00:00+02:00"),
                         Instant.parse("2019-12-31T23:59:59+02:00")
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         2,
-                        userRepository.findById(2).orElseThrow(),
-                        unitRepository.findById(12).orElseThrow(),
-                        roleRepository.findById(101).orElseThrow(),
+                        users.get(1),
+                        units.get(1),
+                        roles.get(0),
                         Instant.parse("2020-01-28T00:00:00+02:00"),
                         Instant.parse("2019-12-31T23:59:59+02:00")
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         1,
-                        userRepository.findById(2).orElseThrow(),
-                        unitRepository.findById(12).orElseThrow(),
-                        roleRepository.findById(105).orElseThrow(),
+                        users.get(1),
+                        units.get(1),
+                        roles.get(4),
                         Instant.parse("2020-01-28T00:00:00+02:00"),
                         null
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         1,
-                        userRepository.findById(2).orElseThrow(),
-                        unitRepository.findById(14).orElseThrow(),
-                        roleRepository.findById(101).orElseThrow(),
+                        users.get(1),
+                        units.get(3),
+                        roles.get(0),
                         Instant.parse("2020-01-28T00:00:00+02:00"),
                         null
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         1,
-                        userRepository.findById(2).orElseThrow(),
-                        unitRepository.findById(14).orElseThrow(),
-                        roleRepository.findById(102).orElseThrow(),
+                        users.get(1),
+                        units.get(3),
+                        roles.get(1),
                         Instant.parse("2020-01-28T00:00:00+02:00"),
                         null
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         1,
-                        userRepository.findById(1).orElseThrow(),
-                        unitRepository.findById(11).orElseThrow(),
-                        roleRepository.findById(101).orElseThrow(),
+                        users.get(0),
+                        units.get(0),
+                        roles.get(0),
                         Instant.parse("2020-02-01T07:00:00+02:00"),
                         null
-                ))
-        );
-        log.info("Preloading {}", userRoleRepository.save(
+                ),
                 new UserRole(
                         1,
-                        userRepository.findById(1).orElseThrow(),
-                        unitRepository.findById(11).orElseThrow(),
-                        roleRepository.findById(104).orElseThrow(),
+                        users.get(0),
+                        units.get(0),
+                        roles.get(3),
                         Instant.parse("2020-02-01T07:00:00+02:00"),
                         null
-                ))
+                )
         );
+        log.info("Preloading user roles: {}", userRoleRepository.saveAll(userRoles));
 
     }
 }
