@@ -2,6 +2,8 @@ package com.example.springboot.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @SequenceGenerator(name="unit_id_generator", initialValue=11, allocationSize=100)
 public class Unit {
@@ -45,6 +47,19 @@ public class Unit {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Unit unit = (Unit) o;
+        return getId() == unit.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 
     @Override

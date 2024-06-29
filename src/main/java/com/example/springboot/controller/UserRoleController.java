@@ -4,11 +4,13 @@ package com.example.springboot.controller;
 import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.repository.UserRoleRepository;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -49,5 +51,21 @@ public class UserRoleController {
         return assembler.toModel(userRole);
     }
     // end::get-single-item[]
+
+    @GetMapping(value = "/user-roles", params = { "userId", "unitId", "timestamp" })
+    CollectionModel<EntityModel<UserRole>> getValid(
+            @RequestParam int userId,
+            @RequestParam int unitId,
+            @RequestParam("timestamp") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant timestamp
+    ) {
+        Set<EntityModel<UserRole>> userRoles = repository.findByUserIdAndUnitIdAndValidFromBeforeAndValidToAfter(userId, unitId, timestamp, timestamp).stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toSet());
+        Set<EntityModel<UserRole>> userRolesWithoutValidTo = repository.findByUserIdAndUnitIdAndValidFromBeforeAndValidToIsNull(userId, unitId, timestamp).stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toSet());
+        userRoles.addAll(userRolesWithoutValidTo);
+        return CollectionModel.of(userRoles, linkTo(methodOn(UserRoleController.class).getAll()).withSelfRel());
+    }
 
 }

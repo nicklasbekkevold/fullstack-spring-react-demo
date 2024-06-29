@@ -3,6 +3,7 @@ package com.example.springboot.model;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @SequenceGenerator(name="user_role_id_generator", initialValue=1001, allocationSize=100)
@@ -14,16 +15,16 @@ public class UserRole {
 
     private int version;
 
-    @ManyToOne
-    @JoinColumn(name="userId")
+    @ManyToOne(optional = false)
+    @JoinColumn(name="userId", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name="unitId")
+    @ManyToOne(optional = false)
+    @JoinColumn(name="unitId", nullable = false)
     private Unit unit;
 
-    @ManyToOne
-    @JoinColumn(name="roleId")
+    @ManyToOne(optional = false)
+    @JoinColumn(name="roleId", nullable = false)
     private Role role;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -100,6 +101,19 @@ public class UserRole {
 
     public Instant getValidTo() {
         return validTo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserRole userRole = (UserRole) o;
+        return getId() == userRole.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 
     @Override

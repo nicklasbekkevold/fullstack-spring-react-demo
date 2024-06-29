@@ -7,13 +7,11 @@ import com.example.springboot.model.User;
 import com.example.springboot.model.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
 
-    List<UserRole> findByUser(User user);
-    List<UserRole> findByUnit(Unit unit);
-    List<UserRole> findByRole(Role role);
-
-    List<UserRole> findByUserAndUnit(User user, Unit unit);
+    List<UserRole> findByUserIdAndUnitIdAndValidFromBeforeAndValidToAfter(int userId, int unit, Instant validFrom, Instant validTo);
+    List<UserRole> findByUserIdAndUnitIdAndValidFromBeforeAndValidToIsNull(int userId, int unit, Instant validFrom);
 }
