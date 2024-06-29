@@ -3,14 +3,9 @@ package com.example.springboot.controller;
 
 import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.model.Unit;
-import com.example.springboot.model.User;
-import com.example.springboot.model.UserRole;
 import com.example.springboot.repository.UnitRepository;
-import com.example.springboot.repository.UserRepository;
-import com.example.springboot.repository.UserRoleRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

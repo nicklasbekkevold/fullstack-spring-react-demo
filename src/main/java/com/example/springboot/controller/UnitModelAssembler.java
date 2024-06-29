@@ -9,7 +9,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-class UnitModelAssembler implements RepresentationModelAssembler<Unit, EntityModel<Unit>> {
+public class UnitModelAssembler implements RepresentationModelAssembler<Unit, EntityModel<Unit>> {
 
     @Override
     public EntityModel<Unit> toModel(Unit unit) {
