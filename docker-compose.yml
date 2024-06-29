@@ -1,0 +1,10 @@
+version: '2'
+services:
+  spring-boot-demo:
+    container_name: spring-boot-demo
+    build:
+      context: spring-boot-demo
+      dockerfile: Dockerfile
+    image: spring-boot-demo:latest
+    ports:
+      - "8080:8080"
