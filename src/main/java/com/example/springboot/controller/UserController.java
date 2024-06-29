@@ -8,6 +8,10 @@ import com.example.springboot.repository.UserRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,14 +86,20 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    void deleteUser(@PathVariable int id, @RequestParam int version) {
+    ResponseEntity<?> deleteUser(@PathVariable int id, @RequestParam int version) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("user", id));
 
         if (version != user.getVersion()) {
-            throw new VersionMismatchException(version, user.getVersion());
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("Specified version %d does not match current version %d".formatted(version, user.getVersion())));
         }
 
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
