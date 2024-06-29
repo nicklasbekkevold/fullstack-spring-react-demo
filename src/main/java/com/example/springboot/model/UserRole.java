@@ -12,8 +12,6 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_role_id_generator")
     private int id;
 
-    @Version
-    @Column
     private int version;
 
     @ManyToOne

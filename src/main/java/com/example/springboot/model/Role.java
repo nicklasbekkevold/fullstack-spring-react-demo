@@ -10,7 +10,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="role_id_generator")
     private int id;
 
-    private final int version;
+    private int version;
     private String name;
 
     public Role() {
@@ -33,6 +33,10 @@ public class Role {
 
     public int getVersion() {
         return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getName() {

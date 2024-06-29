@@ -10,7 +10,7 @@ public class Unit {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="unit_id_generator")
     private int id;
 
-    private final int version;
+    private int version;
     private String name;
 
     public Unit() {
@@ -33,6 +33,10 @@ public class Unit {
 
     public int getVersion() {
         return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getName() {

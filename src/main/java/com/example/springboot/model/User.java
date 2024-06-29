@@ -10,7 +10,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_generator")
     private int id;
 
-    private final int version;
+    private int version;
     private String name;
 
     private User() {
@@ -33,6 +33,10 @@ public class User {
 
     public int getVersion() {
         return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getName() {
