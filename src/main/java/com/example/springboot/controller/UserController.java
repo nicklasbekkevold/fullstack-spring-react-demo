@@ -60,7 +60,7 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     User updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
-        User user = repository.findById(id) //
+        User user = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("user", id));
 
         if (version != user.getVersion()) {
@@ -74,7 +74,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     void deleteUser(@PathVariable int id, @RequestParam int version) {
-        User user = repository.findById(id) //
+        User user = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("user", id));
 
         if (version != user.getVersion()) {

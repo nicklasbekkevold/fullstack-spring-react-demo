@@ -2,9 +2,7 @@ package com.example.springboot.controller;
 
 
 import com.example.springboot.exception.EntityNotFoundException;
-import com.example.springboot.exception.VersionMismatchException;
 import com.example.springboot.model.Unit;
-import com.example.springboot.model.User;
 import com.example.springboot.repository.UnitRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -40,17 +38,12 @@ public class UnitController {
     }
     // end::get-aggregate-root[]
 
-    @PostMapping("/units")
-    Unit newUnit(@RequestBody Unit newUnit) {
-        return repository.save(newUnit);
-    }
-
     // Single item
     // tag::get-single-item[]
     @GetMapping("/units/{id}")
     EntityModel<Unit> one(@PathVariable int id) {
 
-        Unit unit = repository.findById(id) //
+        Unit unit = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("unit", id));
 
         return EntityModel.of(unit, //
