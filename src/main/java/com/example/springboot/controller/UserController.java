@@ -63,17 +63,22 @@ public class UserController {
     // end::get-single-item[]
 
     @PutMapping("/users/{id}")
-    User updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
-        User user = repository.findById(id)
+    ResponseEntity<?> updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
+        User updatedUser = repository.findById(id)
+                .map(user -> {
+                    if (version != user.getVersion()) {
+                        throw new VersionMismatchException(version, user.getVersion());
+                    }
+                    user.setName(newUser.getName());
+                    user.setVersion(newUser.getVersion());
+                    return repository.save(user);
+                })
                 .orElseThrow(() -> new EntityNotFoundException("user", id));
 
-        if (version != user.getVersion()) {
-            throw new VersionMismatchException(version, user.getVersion());
-        }
-
-        user.setName(newUser.getName());
-        user.setVersion(newUser.getVersion());
-        return repository.save(user);
+        EntityModel<User> entityModel = assembler.toModel(updatedUser);
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @DeleteMapping("/users/{id}")
