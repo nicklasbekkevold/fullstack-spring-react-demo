@@ -18,37 +18,35 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserRoleController {
 
     private final UserRoleRepository repository;
+    private final UserRoleModelAssembler assembler;
 
-    UserRoleController(UserRoleRepository repository) {
+    UserRoleController(UserRoleRepository repository, UserRoleModelAssembler assembler) {
         this.repository = repository;
+        this.assembler = assembler;
     }
 
     // Aggregate root
     // tag::get-aggregate-root[]
     @GetMapping("/user-roles")
-    CollectionModel<EntityModel<UserRole>> all() {
+    CollectionModel<EntityModel<UserRole>> getAll() {
 
         List<EntityModel<UserRole>> userRoles = repository.findAll().stream()
-                .map(userRole -> EntityModel.of(userRole,
-                        linkTo(methodOn(UserRoleController.class).one(userRole.getId())).withSelfRel(),
-                        linkTo(methodOn(UserRoleController.class).all()).withRel("userRoles")))
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(userRoles, linkTo(methodOn(UserRoleController.class).all()).withSelfRel());
+        return CollectionModel.of(userRoles, linkTo(methodOn(UserRoleController.class).getAll()).withSelfRel());
     }
     // end::get-aggregate-root[]
 
     // Single item
     // tag::get-single-item[]
     @GetMapping("/user-roles/{id}")
-    EntityModel<UserRole> one(@PathVariable int id) {
+    EntityModel<UserRole> get(@PathVariable int id) {
 
         UserRole userRole = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("userRole", id));
 
-        return EntityModel.of(userRole,
-                linkTo(methodOn(UserRoleController.class).one(id)).withSelfRel(),
-                linkTo(methodOn(UserRoleController.class).all()).withRel("userRoles"));
+        return assembler.toModel(userRole);
     }
     // end::get-single-item[]
 

@@ -18,37 +18,37 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class RoleController {
 
     private final RoleRepository repository;
+    private final RoleModelAssembler assembler;
 
-    RoleController(RoleRepository repository) {
+    RoleController(RoleRepository repository, RoleModelAssembler assembler) {
         this.repository = repository;
+        this.assembler = assembler;
     }
 
     // Aggregate root
     // tag::get-aggregate-root[]
     @GetMapping("/roles")
-    CollectionModel<EntityModel<Role>> all() {
+    CollectionModel<EntityModel<Role>> getAll() {
 
         List<EntityModel<Role>> roles = repository.findAll().stream()
-                .map(role -> EntityModel.of(role,
-                        linkTo(methodOn(RoleController.class).one(role.getId())).withSelfRel(),
-                        linkTo(methodOn(RoleController.class).all()).withRel("roles")))
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(roles, linkTo(methodOn(RoleController.class).all()).withSelfRel());
+        return CollectionModel.of(roles, linkTo(methodOn(RoleController.class).getAll()).withSelfRel());
     }
     // end::get-aggregate-root[]
 
     // Single item
     // tag::get-single-item[]
     @GetMapping("/roles/{id}")
-    EntityModel<Role> one(@PathVariable int id) {
+    EntityModel<Role> get(@PathVariable int id) {
 
         Role role = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("role", id));
 
         return EntityModel.of(role,
-                linkTo(methodOn(RoleController.class).one(id)).withSelfRel(),
-                linkTo(methodOn(RoleController.class).all()).withRel("roles"));
+                linkTo(methodOn(RoleController.class).get(id)).withSelfRel(),
+                linkTo(methodOn(RoleController.class).getAll()).withRel("roles"));
     }
     // end::get-single-item[]
 }

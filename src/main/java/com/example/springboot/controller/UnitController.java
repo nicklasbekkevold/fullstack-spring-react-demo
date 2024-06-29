@@ -3,9 +3,14 @@ package com.example.springboot.controller;
 
 import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.model.Unit;
+import com.example.springboot.model.User;
+import com.example.springboot.model.UserRole;
 import com.example.springboot.repository.UnitRepository;
+import com.example.springboot.repository.UserRepository;
+import com.example.springboot.repository.UserRoleRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,37 +23,35 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UnitController {
 
     private final UnitRepository repository;
+    private final UnitModelAssembler assembler;
 
-    UnitController(UnitRepository repository) {
+    public UnitController(UnitRepository repository, UnitModelAssembler assembler) {
         this.repository = repository;
+        this.assembler = assembler;
     }
 
     // Aggregate root
     // tag::get-aggregate-root[]
     @GetMapping("/units")
-    CollectionModel<EntityModel<Unit>> all() {
+    public CollectionModel<EntityModel<Unit>> getAll() {
 
         List<EntityModel<Unit>> units = repository.findAll().stream()
-                .map(unit -> EntityModel.of(unit,
-                        linkTo(methodOn(UnitController.class).one(unit.getId())).withSelfRel(),
-                        linkTo(methodOn(UnitController.class).all()).withRel("units")))
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(units, linkTo(methodOn(UnitController.class).all()).withSelfRel());
+        return CollectionModel.of(units, linkTo(methodOn(UnitController.class).getAll()).withSelfRel());
     }
     // end::get-aggregate-root[]
 
     // Single item
     // tag::get-single-item[]
     @GetMapping("/units/{id}")
-    EntityModel<Unit> one(@PathVariable int id) {
+    public EntityModel<Unit> get(@PathVariable int id) {
 
         Unit unit = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("unit", id));
 
-        return EntityModel.of(unit, //
-                linkTo(methodOn(UnitController.class).one(id)).withSelfRel(),
-                linkTo(methodOn(UnitController.class).all()).withRel("units"));
+        return assembler.toModel(unit);
     }
     // end::get-single-item[]
 

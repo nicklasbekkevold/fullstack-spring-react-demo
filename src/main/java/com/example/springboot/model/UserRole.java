@@ -62,6 +62,14 @@ public class UserRole {
         this.validFrom = validFrom;
     }
 
+    public UserRole(int version, User user, Unit unit, Role role) {
+        this.version = version;
+        this.user = user;
+        this.unit = unit;
+        this.role = role;
+        this.validFrom = Instant.now();
+    }
+
     public UserRole(User user, Unit unit, Role role) {
         this.version = 1;
         this.user = user;

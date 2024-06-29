@@ -19,23 +19,23 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserController {
 
     private final UserRepository repository;
+    private final UserModelAssembler assembler;
 
-    UserController(UserRepository repository) {
+    UserController(UserRepository repository, UserModelAssembler assembler) {
         this.repository = repository;
+        this.assembler = assembler;
     }
 
     // Aggregate root
     // tag::get-aggregate-root[]
     @GetMapping("/users")
-    CollectionModel<EntityModel<User>> all() {
+    CollectionModel<EntityModel<User>> getAll() {
 
         List<EntityModel<User>> users = repository.findAll().stream()
-                .map(user -> EntityModel.of(user,
-                        linkTo(methodOn(UserController.class).one(user.getId())).withSelfRel(),
-                        linkTo(methodOn(UserController.class).all()).withRel("users")))
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(users, linkTo(methodOn(UserController.class).all()).withSelfRel());
+        return CollectionModel.of(users, linkTo(methodOn(UserController.class).getAll()).withSelfRel());
     }
     // end::get-aggregate-root[]
 
@@ -47,14 +47,12 @@ public class UserController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/users/{id}")
-    EntityModel<User> one(@PathVariable int id) {
+    EntityModel<User> get(@PathVariable int id) {
 
         User user = repository.findById(id) //
                 .orElseThrow(() -> new EntityNotFoundException("user", id));
 
-        return EntityModel.of(user, //
-                linkTo(methodOn(UserController.class).one(id)).withSelfRel(),
-                linkTo(methodOn(UserController.class).all()).withRel("users"));
+        return assembler.toModel(user);
     }
     // end::get-single-item[]
 
