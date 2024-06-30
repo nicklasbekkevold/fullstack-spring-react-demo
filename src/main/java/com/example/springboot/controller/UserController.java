@@ -1,8 +1,6 @@
 package com.example.springboot.controller;
 
 
-import com.example.springboot.exception.EntityNotFoundException;
-import com.example.springboot.exception.VersionMismatchException;
 import com.example.springboot.model.User;
 import com.example.springboot.repository.UserRepository;
 import org.springframework.hateoas.CollectionModel;
@@ -16,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -56,28 +55,49 @@ public class UserController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/users/{id}")
-    EntityModel<User> get(@PathVariable int id) {
-        User user = repository.findById(id) //
-                .orElseThrow(() -> new EntityNotFoundException("user", id));
+    ResponseEntity<?> get(@PathVariable int id) {
+        Optional<User> user = repository.findById(id);
 
-        return assembler.toModel(user);
+        if (user.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Not found")
+                            .withDetail("Could not find user with id %d".formatted(id)));
+
+        }
+        return ResponseEntity.ok(assembler.toModel(user.get()));
     }
     // end::get-single-item[]
 
     @PutMapping("/users/{id}")
     ResponseEntity<?> updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
-        User updatedUser = repository.findById(id)
-                .map(user -> {
-                    if (version != user.getVersion()) {
-                        throw new VersionMismatchException(version, user.getVersion());
-                    }
-                    user.setName(newUser.getName());
-                    user.setVersion(newUser.getVersion());
-                    return repository.save(user);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("user", id));
+        Optional<User> existingUser = repository.findById(id);
+        if (existingUser.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Not found")
+                            .withDetail("Could not find user with id %d".formatted(id)));
 
-        EntityModel<User> entityModel = assembler.toModel(updatedUser);
+        }
+
+        if (version != existingUser.get().getVersion()) {
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("Specified version %d does not match current version %d".formatted(version, existingUser.get().getVersion())));
+        }
+
+        existingUser.get().setName(newUser.getName());
+        existingUser.get().setVersion(newUser.getVersion());
+        repository.save(existingUser.get());
+
+        EntityModel<User> entityModel = assembler.toModel(existingUser.get());
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
@@ -85,16 +105,25 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     ResponseEntity<?> deleteUser(@PathVariable int id, @RequestParam int version) {
-        User user = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("user", id));
+        Optional<User> user = repository.findById(id);
 
-        if (version != user.getVersion()) {
+        if (user.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Not found")
+                            .withDetail("Could not find user with id %d".formatted(id)));
+
+        }
+
+        if (version != user.get().getVersion()) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .body(Problem.create()
                             .withTitle("Method not allowed")
-                            .withDetail("Specified version %d does not match current version %d".formatted(version, user.getVersion())));
+                            .withDetail("Specified version %d does not match current version %d".formatted(version, user.get().getVersion())));
         }
 
         if (!repository.existsByIdAndUserRolesIsEmpty(id)) {

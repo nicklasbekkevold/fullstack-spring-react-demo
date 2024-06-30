@@ -1,14 +1,19 @@
 package com.example.springboot.controller;
 
 
-import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.model.Unit;
 import com.example.springboot.repository.UnitRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -40,11 +45,19 @@ public class UnitController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/units/{id}")
-    public EntityModel<Unit> get(@PathVariable int id) {
-        Unit unit = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("unit", id));
+    public ResponseEntity<?> get(@PathVariable int id) {
+        Optional<Unit> unit = repository.findById(id);
 
-        return assembler.toModel(unit);
+        if (unit.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Not found")
+                            .withDetail("Could not find unit with id %d".formatted(id)));
+
+        }
+        return ResponseEntity.ok(assembler.toModel(unit.get()));
     }
     // end::get-single-item[]
 

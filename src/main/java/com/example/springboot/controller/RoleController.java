@@ -1,14 +1,19 @@
 package com.example.springboot.controller;
 
 
-import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.model.Role;
 import com.example.springboot.repository.RoleRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -20,7 +25,7 @@ public class RoleController {
     private final RoleRepository repository;
     private final RoleModelAssembler assembler;
 
-    RoleController(RoleRepository repository, RoleModelAssembler assembler) {
+    public RoleController(RoleRepository repository, RoleModelAssembler assembler) {
         this.repository = repository;
         this.assembler = assembler;
     }
@@ -28,7 +33,7 @@ public class RoleController {
     // Aggregate root
     // tag::get-aggregate-root[]
     @GetMapping("/roles")
-    CollectionModel<EntityModel<Role>> getAll() {
+    public CollectionModel<EntityModel<Role>> getAll() {
         List<EntityModel<Role>> roles = repository.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
@@ -40,13 +45,19 @@ public class RoleController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/roles/{id}")
-    EntityModel<Role> get(@PathVariable int id) {
-        Role role = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("role", id));
+    public ResponseEntity<?> get(@PathVariable int id) {
+        Optional<Role> role = repository.findById(id);
 
-        return EntityModel.of(role,
-                linkTo(methodOn(RoleController.class).get(id)).withSelfRel(),
-                linkTo(methodOn(RoleController.class).getAll()).withRel("roles"));
+        if (role.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Not found")
+                            .withDetail("Could not find role with id %d".formatted(id)));
+
+        }
+        return ResponseEntity.ok(assembler.toModel(role.get()));
     }
     // end::get-single-item[]
 }

@@ -9,7 +9,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-class UserRoleModelAssembler implements RepresentationModelAssembler<UserRole, EntityModel<UserRole>> {
+public class UserRoleModelAssembler implements RepresentationModelAssembler<UserRole, EntityModel<UserRole>> {
 
     @Override
     public EntityModel<UserRole> toModel(UserRole userUserRole) {
