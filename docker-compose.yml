@@ -11,7 +11,7 @@ services:
   react-app:
     build:
       context: frontend
-      dockerfile: frontend/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "3000:80"
     restart: on-failure
