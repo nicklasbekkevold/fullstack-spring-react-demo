@@ -32,7 +32,7 @@ public class UnitController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/units")
+    @GetMapping("/api/units")
     public CollectionModel<EntityModel<Unit>> getAll() {
         List<EntityModel<Unit>> units = repository.findAll().stream()
                 .map(assembler::toModel)
@@ -44,7 +44,7 @@ public class UnitController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/units/{id}")
+    @GetMapping("/api/units/{id}")
     public ResponseEntity<?> get(@PathVariable int id) {
         Optional<Unit> unit = repository.findById(id);
 

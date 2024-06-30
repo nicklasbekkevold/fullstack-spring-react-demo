@@ -40,7 +40,7 @@ public class UserRoleController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/user-roles")
+    @GetMapping("/api/user-roles")
     CollectionModel<EntityModel<UserRole>> getAll() {
         List<EntityModel<UserRole>> userRoles = service.findAll().stream()
                 .map(assembler::toModel)
@@ -84,7 +84,7 @@ public class UserRoleController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/user-roles/{id}")
+    @GetMapping("/api/user-roles/{id}")
     ResponseEntity<?> get(@PathVariable int id) {
         Optional<UserRole> userRole = service.findById(id);
 

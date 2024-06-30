@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ContextController {
 
-	@GetMapping("/")
+	@GetMapping("/api/")
 	public String index() {
 		return "Greetings from Spring Boot!";
 	}

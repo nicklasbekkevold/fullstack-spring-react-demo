@@ -32,7 +32,7 @@ public class RoleController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/roles")
+    @GetMapping("/api/roles")
     public CollectionModel<EntityModel<Role>> getAll() {
         List<EntityModel<Role>> roles = repository.findAll().stream()
                 .map(assembler::toModel)
@@ -44,7 +44,7 @@ public class RoleController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/roles/{id}")
+    @GetMapping("/api/roles/{id}")
     public ResponseEntity<?> get(@PathVariable int id) {
         Optional<Role> role = repository.findById(id);
 

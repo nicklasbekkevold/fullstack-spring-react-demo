@@ -33,7 +33,7 @@ public class UserController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/users")
+    @GetMapping("/api/users")
     CollectionModel<EntityModel<User>> getAll() {
         List<EntityModel<User>> users = repository.findAll().stream()
                 .map(assembler::toModel)
@@ -54,7 +54,7 @@ public class UserController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/users/{id}")
+    @GetMapping("/api/users/{id}")
     ResponseEntity<?> get(@PathVariable int id) {
         Optional<User> user = repository.findById(id);
 
