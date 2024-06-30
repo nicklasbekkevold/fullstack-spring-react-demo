@@ -1,10 +1,17 @@
-version: '2'
+version: '3'
 services:
-  spring-boot-demo:
-    container_name: spring-boot-demo
+
+  spring-boot-app:
     build:
-      context: spring-boot-demo
+      context: ./backend
       dockerfile: Dockerfile
-    image: spring-boot-demo:latest
     ports:
       - "8080:8080"
+
+  react-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    restart: on-failure
