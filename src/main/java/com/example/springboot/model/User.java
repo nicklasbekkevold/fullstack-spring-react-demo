@@ -16,12 +16,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<UserRole> userRoles;
 
-    private int version;
+    private int version = 1;
     private String name;
 
-    private User() {
-        this.version = 1;
-    }
+    private User() { }
 
     public User(int version, String name) {
         this.version = version;
@@ -29,8 +27,7 @@ public class User {
     }
 
     public User(String name) {
-        this.version = 1;
-        this.name = name;
+        this(1, name);
     }
 
     public int getId() {

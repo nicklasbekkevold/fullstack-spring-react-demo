@@ -16,12 +16,10 @@ public class Role {
     @OneToMany(mappedBy = "role")
     private List<UserRole> userRoles;
 
-    private int version;
+    private int version = 1;
     private String name;
 
-    public Role() {
-        this.version = 1;
-    }
+    public Role() { }
 
     public Role(int version, String name) {
         this.version = version;
@@ -29,8 +27,7 @@ public class Role {
     }
 
     public Role(String name) {
-        this.version = 1;
-        this.name = name;
+        this(1, name);
     }
 
     public int getId() {
@@ -41,16 +38,8 @@ public class Role {
         return version;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

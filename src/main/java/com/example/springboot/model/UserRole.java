@@ -13,7 +13,7 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_role_id_generator")
     private int id;
 
-    private int version;
+    private int version = 1;
 
     @ManyToOne(optional = false)
     @JoinColumn(name="userId", nullable = false)
@@ -33,51 +33,21 @@ public class UserRole {
     @Temporal(TemporalType.TIMESTAMP)
     private Instant validTo;
 
-    public UserRole() {
-        this.version = 1;
-    }
+    public UserRole() { }
 
     public UserRole(int version, User user, Unit unit, Role role, Instant validFrom, Instant validTo) {
         this.version = version;
         this.user = user;
         this.unit = unit;
         this.role = role;
-        this.validFrom = validFrom;
+        this.validFrom = validFrom == null ? Instant.now() : validFrom;
         this.validTo = validTo;
     }
 
     public UserRole(User user, Unit unit, Role role, Instant validFrom, Instant validTo) {
-        this.version = 1;
-        this.user = user;
-        this.unit = unit;
-        this.role = role;
-        this.validFrom = validFrom;
-        this.validTo = validTo;
+        this(1, user, unit, role, validFrom, validTo);
     }
 
-    public UserRole(User user, Unit unit, Role role, Instant validFrom) {
-        this.version = 1;
-        this.user = user;
-        this.unit = unit;
-        this.role = role;
-        this.validFrom = validFrom;
-    }
-
-    public UserRole(int version, User user, Unit unit, Role role) {
-        this.version = version;
-        this.user = user;
-        this.unit = unit;
-        this.role = role;
-        this.validFrom = Instant.now();
-    }
-
-    public UserRole(User user, Unit unit, Role role) {
-        this.version = 1;
-        this.user = user;
-        this.unit = unit;
-        this.role = role;
-        this.validFrom = Instant.now();
-    }
 
     public int getId() {
         return id;

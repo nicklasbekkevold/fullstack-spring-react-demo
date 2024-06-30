@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
 
-    List<UserRole> findByUserIdAndUnitIdAndRoleId(int userId, int unitId, int roleId);
+    boolean existsByUserIdAndUnitIdAndRoleId(int userId, int unitId, int roleId);
 
     List<UserRole> findByUserIdAndUnitIdAndValidFromBeforeAndValidToAfterOrValidFromBeforeAndValidToIsNull(
             int userId,

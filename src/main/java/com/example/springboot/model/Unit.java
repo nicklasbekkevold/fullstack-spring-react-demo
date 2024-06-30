@@ -16,12 +16,10 @@ public class Unit {
     @OneToMany(mappedBy = "unit")
     private List<UserRole> userRoles;
 
-    private int version;
+    private int version = 1;
     private String name;
 
-    public Unit() {
-        this.version = 1;
-    }
+    public Unit() { }
 
     public Unit(int version, String name) {
         this.version = version;
@@ -29,8 +27,7 @@ public class Unit {
     }
 
     public Unit(String name) {
-        this.version = 1;
-        this.name = name;
+        this(1, name);
     }
 
     public int getId() {
@@ -41,16 +38,8 @@ public class Unit {
         return version;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

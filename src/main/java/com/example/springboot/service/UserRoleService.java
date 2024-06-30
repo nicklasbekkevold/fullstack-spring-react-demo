@@ -1,5 +1,6 @@
 package com.example.springboot.service;
 
+import com.example.springboot.dto.UserRoleCreationDto;
 import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.repository.UserRoleRepository;
@@ -29,11 +30,15 @@ public class UserRoleService {
         );
     }
 
-    public List<UserRole> findByUserIdAndUnitIdAndRoleId(int userId, int unitId, int roleId) {
-        return repository.findByUserIdAndUnitIdAndRoleId(userId, unitId, roleId);
+    public boolean exists(int userId, int unitId, int roleId) {
+        return repository.existsByUserIdAndUnitIdAndRoleId(userId, unitId, roleId);
     }
 
     public List<UserRole> findValidUserRoles(int userId, int unitId, Instant timestamp) {
         return repository.findByUserIdAndUnitIdAndValidFromBeforeAndValidToAfterOrValidFromBeforeAndValidToIsNull(userId, unitId, timestamp, timestamp, timestamp);
+    }
+
+    public UserRole save(UserRole userRole) {
+        return repository.save(userRole);
     }
 }
