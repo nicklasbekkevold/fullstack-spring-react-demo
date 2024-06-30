@@ -1,4 +1,4 @@
-package com.example.springboot.service;
+package com.example.springboot;
 
 import com.example.springboot.model.Role;
 import com.example.springboot.model.Unit;

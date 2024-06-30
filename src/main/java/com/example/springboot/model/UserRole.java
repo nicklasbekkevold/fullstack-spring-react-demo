@@ -83,6 +83,10 @@ public class UserRole {
         return id;
     }
 
+    public int getVersion() {
+        return version;
+    }
+
     public User getUser() {
         return user;
     }
