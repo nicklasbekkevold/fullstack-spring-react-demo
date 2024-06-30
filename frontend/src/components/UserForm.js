@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useParams } from 'react';
-import { getUserById } from '../services/getUsers';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { createUser } from '../services/createUser';
+import { getUserById } from '../services/getUsers';
 
 const UserForm = ({ initialData = {}, onSubmit }) => {
   const { id } = useParams();
