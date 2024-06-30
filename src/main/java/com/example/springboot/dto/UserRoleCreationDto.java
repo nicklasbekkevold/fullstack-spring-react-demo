@@ -23,7 +23,7 @@ public class UserRoleCreationDto {
         this.userId = userId;
         this.unitId = unitId;
         this.roleId = roleId;
-        this.validFrom = validFrom;
+        this.validFrom = validFrom == null ? Instant.now() : validFrom;
         this.validTo = validTo;
     }
 

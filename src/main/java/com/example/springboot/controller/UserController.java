@@ -36,7 +36,6 @@ public class UserController {
     // tag::get-aggregate-root[]
     @GetMapping("/users")
     CollectionModel<EntityModel<User>> getAll() {
-
         List<EntityModel<User>> users = repository.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
@@ -58,7 +57,6 @@ public class UserController {
     // tag::get-single-item[]
     @GetMapping("/users/{id}")
     EntityModel<User> get(@PathVariable int id) {
-
         User user = repository.findById(id) //
                 .orElseThrow(() -> new EntityNotFoundException("user", id));
 

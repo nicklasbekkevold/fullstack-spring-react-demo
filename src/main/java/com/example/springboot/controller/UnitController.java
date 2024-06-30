@@ -29,7 +29,6 @@ public class UnitController {
     // tag::get-aggregate-root[]
     @GetMapping("/units")
     public CollectionModel<EntityModel<Unit>> getAll() {
-
         List<EntityModel<Unit>> units = repository.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
@@ -42,7 +41,6 @@ public class UnitController {
     // tag::get-single-item[]
     @GetMapping("/units/{id}")
     public EntityModel<Unit> get(@PathVariable int id) {
-
         Unit unit = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("unit", id));
 

@@ -30,13 +30,14 @@ public class UserRoleService {
         );
     }
 
-    public boolean exists(int userId, int unitId, int roleId) {
-        return repository.existsByUserIdAndUnitIdAndRoleId(userId, unitId, roleId);
+    public boolean exists(int userId, int unitId, int roleId, Instant timestamp) {
+        return repository.existsByUserIdAndUnitIdAndRoleIdAndValidFromBeforeAndValidToAfterOrValidFromBeforeAndValidToIsNull(userId, unitId, roleId, timestamp, timestamp, timestamp);
     }
 
     public List<UserRole> findValidUserRoles(int userId, int unitId, Instant timestamp) {
         return repository.findByUserIdAndUnitIdAndValidFromBeforeAndValidToAfterOrValidFromBeforeAndValidToIsNull(userId, unitId, timestamp, timestamp, timestamp);
     }
+
 
     public UserRole save(UserRole userRole) {
         return repository.save(userRole);

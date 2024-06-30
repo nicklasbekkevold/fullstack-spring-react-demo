@@ -29,7 +29,6 @@ public class RoleController {
     // tag::get-aggregate-root[]
     @GetMapping("/roles")
     CollectionModel<EntityModel<Role>> getAll() {
-
         List<EntityModel<Role>> roles = repository.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
@@ -42,7 +41,6 @@ public class RoleController {
     // tag::get-single-item[]
     @GetMapping("/roles/{id}")
     EntityModel<Role> get(@PathVariable int id) {
-
         Role role = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("role", id));
 

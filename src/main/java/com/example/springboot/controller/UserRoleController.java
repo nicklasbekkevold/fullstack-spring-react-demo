@@ -3,9 +3,12 @@ package com.example.springboot.controller;
 
 import com.example.springboot.dto.UserRoleCreationDto;
 import com.example.springboot.dto.UserRoleCreationMapper;
+import com.example.springboot.exception.EntityNotFoundException;
+import com.example.springboot.exception.VersionMismatchException;
 import com.example.springboot.model.User;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.service.UserRoleService;
+import jakarta.persistence.Temporal;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -18,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,8 +56,10 @@ public class UserRoleController {
 
     @PostMapping("/user-roles")
     public ResponseEntity<?> createUserRole(@RequestBody UserRoleCreationDto userRoleDto) {
-        if (service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId())) {
-            System.out.println(service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId()));
+        if (
+                service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidFrom().plusSeconds(1)) ||
+                service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), Instant.MAX)
+        ) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
