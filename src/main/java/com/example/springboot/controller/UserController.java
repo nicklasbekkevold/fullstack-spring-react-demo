@@ -99,6 +99,15 @@ public class UserController {
                             .withDetail("Specified version %d does not match current version %d".formatted(version, user.getVersion())));
         }
 
+        if (!repository.existsByIdAndUserRolesIsEmpty(id)) {
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("Cannot delete user with existing user roles"));
+        }
+
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

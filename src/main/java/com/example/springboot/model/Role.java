@@ -2,6 +2,7 @@ package com.example.springboot.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -11,6 +12,9 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="role_id_generator")
     private int id;
+
+    @OneToMany(mappedBy = "role")
+    private List<UserRole> userRoles;
 
     private int version;
     private String name;
