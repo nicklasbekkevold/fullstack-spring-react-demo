@@ -3,12 +3,11 @@ package com.example.springboot.controller;
 
 import com.example.springboot.dto.UserRoleCreationDto;
 import com.example.springboot.dto.UserRoleCreationMapper;
+import com.example.springboot.dto.UserRoleUpdateDto;
 import com.example.springboot.exception.EntityNotFoundException;
-import com.example.springboot.exception.VersionMismatchException;
 import com.example.springboot.model.User;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.service.UserRoleService;
-import jakarta.persistence.Temporal;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -21,8 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.time.temporal.TemporalAmount;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -45,7 +43,6 @@ public class UserRoleController {
     // tag::get-aggregate-root[]
     @GetMapping("/user-roles")
     CollectionModel<EntityModel<UserRole>> getAll() {
-
         List<EntityModel<UserRole>> userRoles = service.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
@@ -57,8 +54,9 @@ public class UserRoleController {
     @PostMapping("/user-roles")
     public ResponseEntity<?> createUserRole(@RequestBody UserRoleCreationDto userRoleDto) {
         if (
-                service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidFrom().plusSeconds(1)) ||
-                service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), Instant.MAX)
+                service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidFrom()) ||
+                (userRoleDto.getValidTo() != null && service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidTo())) ||
+                (userRoleDto.getValidTo() == null && service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), Instant.MAX))
         ) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -104,6 +102,51 @@ public class UserRoleController {
                 .map(assembler::toModel)
                 .toList();
         return CollectionModel.of(userRoles, linkTo(methodOn(UserRoleController.class).getAll()).withSelfRel());
+    }
+
+    @PutMapping("/user-roles/{id}")
+    ResponseEntity<?> updateUserRole(@RequestBody UserRoleUpdateDto userRoleDto, @PathVariable int id, @RequestParam int version) {
+        if (userRoleDto.getValidTo() != null && userRoleDto.getValidTo().isBefore(userRoleDto.getValidFrom())) {
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("validTo is before validFrom"));
+        }
+
+        UserRole userRole = service.findById(id);
+        System.out.println(userRole);
+        if (version != userRole.getVersion()) {
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("Specified version %d does not match current version %d".formatted(version, userRole.getVersion())));
+        }
+
+        if (
+                service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), userRoleDto.getValidFrom()) ||
+                (userRoleDto.getValidTo() != null && service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), userRoleDto.getValidTo())) ||
+                (userRoleDto.getValidTo() == null && service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), Instant.MAX))
+        ) {
+            System.out.println(service.findValidUserRoles(userRole.getUser().getId(), userRole.getUnit().getId(), userRoleDto.getValidTo()));
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("User role with specified userId, unitId, and roleId already exists."));
+        }
+
+        userRole.setValidFrom(userRoleDto.getValidFrom());
+        userRole.setValidTo(userRoleDto.getValidTo());
+        service.save(userRole);
+        EntityModel<UserRole> entityModel = assembler.toModel(userRole);
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
 }

@@ -73,8 +73,16 @@ public class UserRole {
         return validFrom;
     }
 
+    public void setValidFrom(Instant validFrom) {
+        this.validFrom = validFrom == null ? Instant.now() : validFrom;
+    }
+
     public Instant getValidTo() {
         return validTo;
+    }
+
+    public void setValidTo(Instant validTo) {
+        this.validTo = validTo;
     }
 
     @Override

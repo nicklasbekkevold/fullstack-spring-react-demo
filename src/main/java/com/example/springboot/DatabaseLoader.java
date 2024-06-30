@@ -68,7 +68,7 @@ class DatabaseLoader implements CommandLineRunner {
                 1,
                 users.get(0),
                 units.get(0),
-                roles.get(1),
+                roles.get(0),
                 Instant.parse("2019-01-02T00:00:00+02:00"),
                 Instant.parse("2019-12-31T23:59:59+02:00")
                 ),
