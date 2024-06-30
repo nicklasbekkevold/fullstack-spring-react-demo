@@ -2,7 +2,7 @@ package com.example.springboot.controller;
 
 
 import com.example.springboot.model.User;
-import com.example.springboot.repository.UserRepository;
+import com.example.springboot.service.UserService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -23,11 +23,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 public class UserController {
 
-    private final UserRepository repository;
+    private final UserService service;
     private final UserModelAssembler assembler;
 
-    UserController(UserRepository repository, UserModelAssembler assembler) {
-        this.repository = repository;
+    UserController(UserService service, UserModelAssembler assembler) {
+        this.service = service;
         this.assembler = assembler;
     }
 
@@ -35,7 +35,7 @@ public class UserController {
     // tag::get-aggregate-root[]
     @GetMapping("/api/users")
     CollectionModel<EntityModel<User>> getAll() {
-        List<EntityModel<User>> users = repository.findAll().stream()
+        List<EntityModel<User>> users = service.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
@@ -43,9 +43,9 @@ public class UserController {
     }
     // end::get-aggregate-root[]
 
-    @PostMapping("/users")
+    @PostMapping("/api/users")
     public ResponseEntity<?> createUser(@RequestBody User newUser) {
-        EntityModel<User> entityModel = assembler.toModel(repository.save(newUser));
+        EntityModel<User> entityModel = assembler.toModel(service.save(newUser));
 
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -55,8 +55,8 @@ public class UserController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/api/users/{id}")
-    ResponseEntity<?> get(@PathVariable int id) {
-        Optional<User> user = repository.findById(id);
+    ResponseEntity<?> getUser(@PathVariable int id) {
+        Optional<User> user = service.findById(id);
 
         if (user.isEmpty()) {
             return ResponseEntity
@@ -73,7 +73,7 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     ResponseEntity<?> updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
-        Optional<User> existingUser = repository.findById(id);
+        Optional<User> existingUser = service.findById(id);
         if (existingUser.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -95,7 +95,7 @@ public class UserController {
 
         existingUser.get().setName(newUser.getName());
         existingUser.get().setVersion(newUser.getVersion());
-        repository.save(existingUser.get());
+        service.save(existingUser.get());
 
         EntityModel<User> entityModel = assembler.toModel(existingUser.get());
         return ResponseEntity
@@ -103,9 +103,9 @@ public class UserController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/api/users/{id}")
     ResponseEntity<?> deleteUser(@PathVariable int id, @RequestParam int version) {
-        Optional<User> user = repository.findById(id);
+        Optional<User> user = service.findById(id);
 
         if (user.isEmpty()) {
             return ResponseEntity
@@ -126,7 +126,7 @@ public class UserController {
                             .withDetail("Specified version %d does not match current version %d".formatted(version, user.get().getVersion())));
         }
 
-        if (!repository.existsByIdAndUserRolesIsEmpty(id)) {
+        if (!service.existsByIdAndUserRolesIsEmpty(id)) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
@@ -135,7 +135,7 @@ public class UserController {
                             .withDetail("Cannot delete user with existing user roles"));
         }
 
-        repository.deleteById(id);
+        service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

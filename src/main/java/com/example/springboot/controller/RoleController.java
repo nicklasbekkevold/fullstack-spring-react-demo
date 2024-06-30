@@ -2,7 +2,7 @@ package com.example.springboot.controller;
 
 
 import com.example.springboot.model.Role;
-import com.example.springboot.repository.RoleRepository;
+import com.example.springboot.service.RoleService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -22,11 +22,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 public class RoleController {
 
-    private final RoleRepository repository;
+    private final RoleService service;
     private final RoleModelAssembler assembler;
 
-    public RoleController(RoleRepository repository, RoleModelAssembler assembler) {
-        this.repository = repository;
+    public RoleController(RoleService service, RoleModelAssembler assembler) {
+        this.service = service;
         this.assembler = assembler;
     }
 
@@ -34,7 +34,7 @@ public class RoleController {
     // tag::get-aggregate-root[]
     @GetMapping("/api/roles")
     public CollectionModel<EntityModel<Role>> getAll() {
-        List<EntityModel<Role>> roles = repository.findAll().stream()
+        List<EntityModel<Role>> roles = service.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
@@ -45,8 +45,8 @@ public class RoleController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/api/roles/{id}")
-    public ResponseEntity<?> get(@PathVariable int id) {
-        Optional<Role> role = repository.findById(id);
+    public ResponseEntity<?> getRole(@PathVariable int id) {
+        Optional<Role> role = service.findById(id);
 
         if (role.isEmpty()) {
             return ResponseEntity

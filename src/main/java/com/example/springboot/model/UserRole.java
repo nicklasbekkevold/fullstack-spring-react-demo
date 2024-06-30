@@ -57,6 +57,10 @@ public class UserRole {
         return version;
     }
 
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     public User getUser() {
         return user;
     }

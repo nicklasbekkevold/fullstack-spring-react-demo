@@ -2,7 +2,7 @@ package com.example.springboot.controller;
 
 
 import com.example.springboot.model.Unit;
-import com.example.springboot.repository.UnitRepository;
+import com.example.springboot.service.UnitService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -22,11 +22,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 public class UnitController {
 
-    private final UnitRepository repository;
+    private final UnitService service;
     private final UnitModelAssembler assembler;
 
-    public UnitController(UnitRepository repository, UnitModelAssembler assembler) {
-        this.repository = repository;
+    public UnitController(UnitService service, UnitModelAssembler assembler) {
+        this.service = service;
         this.assembler = assembler;
     }
 
@@ -34,7 +34,7 @@ public class UnitController {
     // tag::get-aggregate-root[]
     @GetMapping("/api/units")
     public CollectionModel<EntityModel<Unit>> getAll() {
-        List<EntityModel<Unit>> units = repository.findAll().stream()
+        List<EntityModel<Unit>> units = service.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
@@ -45,8 +45,8 @@ public class UnitController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/api/units/{id}")
-    public ResponseEntity<?> get(@PathVariable int id) {
-        Optional<Unit> unit = repository.findById(id);
+    public ResponseEntity<?> getUnit(@PathVariable int id) {
+        Optional<Unit> unit = service.findById(id);
 
         if (unit.isEmpty()) {
             return ResponseEntity

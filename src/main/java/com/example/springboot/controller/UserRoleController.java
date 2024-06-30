@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public class UserRoleController {
     }
     // end::get-aggregate-root[]
 
-    @PostMapping("/user-roles")
+    @PostMapping("/api/user-roles")
     public ResponseEntity<?> createUserRole(@RequestBody UserRoleCreationDto userRoleDto) {
         if (
                 service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidFrom()) ||
@@ -62,7 +63,7 @@ public class UserRoleController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .body(Problem.create()
                             .withTitle("Method not allowed")
-                            .withDetail("User role with specified userId, unitId, and roleId already exists."));
+                            .withDetail("User role with specified userId, unitId, and roleId already exists in timeframe"));
         }
 
         if (userRoleDto.getValidTo() != null && userRoleDto.getValidTo().isBefore(userRoleDto.getValidFrom())) {
@@ -74,7 +75,18 @@ public class UserRoleController {
                             .withDetail("validTo is before validFrom"));
         }
 
-        UserRole newUserRole = mapper.toUserRole(userRoleDto);
+        UserRole newUserRole;
+        try {
+            newUserRole = mapper.toUserRole(userRoleDto);
+        } catch (NoSuchElementException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("userId, unitId, or roleId does not exist"));
+        }
+
         EntityModel<UserRole> entityModel = assembler.toModel(service.save(newUserRole));
 
         return ResponseEntity
@@ -85,7 +97,7 @@ public class UserRoleController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/api/user-roles/{id}")
-    ResponseEntity<?> get(@PathVariable int id) {
+    ResponseEntity<?> getUserRole(@PathVariable int id) {
         Optional<UserRole> userRole = service.findById(id);
 
         if (userRole.isEmpty()) {
@@ -100,7 +112,7 @@ public class UserRoleController {
     }
     // end::get-single-item[]
 
-    @GetMapping(value = "/user-roles", params = {"userId", "unitId", "timestamp"})
+    @GetMapping(value = "/api/user-roles", params = {"userId", "unitId", "timestamp"})
     CollectionModel<EntityModel<UserRole>> getValid(
             @RequestParam int userId,
             @RequestParam int unitId,
@@ -112,7 +124,7 @@ public class UserRoleController {
         return CollectionModel.of(userRoles, linkTo(methodOn(UserRoleController.class).getAll()).withSelfRel());
     }
 
-    @PutMapping("/user-roles/{id}")
+    @PutMapping("/api/user-roles/{id}")
     ResponseEntity<?> updateUserRole(@RequestBody UserRoleUpdateDto userRoleDto, @PathVariable int id, @RequestParam int version) {
         if (userRoleDto.getValidTo() != null && userRoleDto.getValidTo().isBefore(userRoleDto.getValidFrom())) {
             return ResponseEntity
@@ -143,7 +155,7 @@ public class UserRoleController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .body(Problem.create()
                             .withTitle("Method not allowed")
-                            .withDetail("User role with specified userId, unitId, and roleId already exists."));
+                            .withDetail("User role with specified userId, unitId, and roleId already exists in timeframe"));
         }
 
         userRole.setValidFrom(userRoleDto.getValidFrom());

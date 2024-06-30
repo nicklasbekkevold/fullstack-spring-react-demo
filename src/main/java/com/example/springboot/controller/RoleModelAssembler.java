@@ -14,7 +14,7 @@ public class RoleModelAssembler implements RepresentationModelAssembler<Role, En
     @Override
     public EntityModel<Role> toModel(Role role) {
         return EntityModel.of(role,
-                linkTo(methodOn(RoleController.class).get(role.getId())).withSelfRel(),
+                linkTo(methodOn(RoleController.class).getRole(role.getId())).withSelfRel(),
                 linkTo(methodOn(RoleController.class).getAll()).withRel("roles"));
     }
 }
