@@ -46,6 +46,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User newUser) {
+        newUser.setVersion(1);
         EntityModel<User> entityModel = assembler.toModel(service.save(newUser));
 
         return ResponseEntity
