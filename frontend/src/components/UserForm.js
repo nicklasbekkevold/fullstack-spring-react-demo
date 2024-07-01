@@ -1,44 +1,71 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { createUser } from '../services/createUser';
-import { getUserById } from '../services/getUsers';
+import { createUser, getUserById, updateUser } from '../services/user';
 
-const UserForm = ({ initialData = {}, onSubmit }) => {
+const UserForm = () => {
   const { id } = useParams();
-  const [version, setVersion] = useState('');
+  const [apiVersion, setApiVersion] = useState(1);
+  const [version, setVersion] = useState(1);
   const [name, setName] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await getUserById(id);
-      const fetchedUser = response.data;
-      setVersion(fetchedUser.version);
-      setName(fetchedUser.name);
-    };
-
-    fetchData();
+    if (id) {
+      const fetchData = async () => {
+        const fetchedUser = await getUserById(id);
+        setVersion(fetchedUser.version);
+        setApiVersion(fetchedUser.version);
+        setName(fetchedUser.name);
+      };
+      
+      fetchData();
+    }
   }, [id]);
 
-  const handleSubmit = async (event) => {
+  const handleCreateUser = async (event) => {
     event.preventDefault();
-    const userData = { version, name }; 
+    const userData = { name }; 
     try {
       await createUser(userData);
-      onSubmit(userData);
       setName('');
       setVersion('');
+      setApiVersion('');
     } catch (error) {
       console.error('Error creating user:', error);
     }
   };
 
+  const handleUpdateUser = async (event) => {
+    event.preventDefault();
+    const userData = { version, name }; 
+    try {
+      await updateUser(id, apiVersion, userData);
+      setName('');
+      setVersion('');
+      setApiVersion('');
+    } catch (error) {
+      console.error('Error updataing user:', error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
+      {id && (
+        <>
+          <label htmlFor="version">Current version:</label>
+          <input type="text" id="apiVersion" value={apiVersion} onChange={(e) => setApiVersion(e.target.value)} />
+          <br/>
+          <br/>
+        </>
+      )}
       <label htmlFor="version">Version:</label>
       <input type="text" id="version" value={version} onChange={(e) => setVersion(e.target.value)} />
       <label htmlFor="name">Name:</label>
       <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
-      <button type="submit">{initialData.id ? 'Update' : 'Create'}</button>
+      {id ? (
+        <button onClick={handleUpdateUser} type="submit">Update</button>
+      ) : (
+        <button onClick={handleCreateUser} type="submit">Create</button>
+      )}
     </form>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getUsers } from '../services/getUsers';
+import { getUsers } from '../services/user';
 
 const UserList = () => {
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -11,8 +11,8 @@ const UserList = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const fetchedUsers = await getUsers();
-        setUsers(fetchedUsers);
+        const { _embedded: embedded } = await getUsers();
+        setUsers(embedded.userList);
       } catch (error) {
         setError(error);
       } finally {
@@ -36,7 +36,7 @@ const UserList = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+          {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.version}</td>
                 <td>{user.name}</td>

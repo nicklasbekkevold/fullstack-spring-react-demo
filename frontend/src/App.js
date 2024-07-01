@@ -19,7 +19,7 @@ function App() {
         <Route path="/" element={<div>Welcome to the application!</div>} /> 
         <Route path="/users" element={<UserList />} /> 
         <Route path="/users/new" element={<UserForm />} />
-        <Route path="/users/:userId" element={<UserForm editMode={true} />} />
+        <Route path="/users/:id" element={<UserForm editMode={true} />} />
       </Routes>
     </main>
   );
