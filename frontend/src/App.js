@@ -7,6 +7,7 @@ import UserForm from './components/UserForm';
 import UserList from './components/UserList';
 import UserRoleForm from './components/UserRoleForm';
 import UserRoleList from './components/UserRoleList';
+import UserRoleSearch from './components/UserRoleSearch';
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
           <li>
             <a href="/user-roles">User Roles</a>
           </li>
+          <li>
+            <a href="/user-roles/search">User Role Search</a>
+          </li>
         </ul>
       </nav>
       <Routes>
@@ -46,6 +50,7 @@ function App() {
         <Route path="/user-roles" element={<UserRoleList />} /> 
         <Route path="/user-roles/new" element={<UserRoleForm />} />
         <Route path="/user-roles/:id" element={<UserRoleForm />} /> 
+        <Route path="/user-roles/search" element={<UserRoleSearch />} /> 
       </Routes>
     </main>
   );

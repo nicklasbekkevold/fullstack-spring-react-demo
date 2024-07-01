@@ -33,6 +33,21 @@ export const getUserRoleById = async (id) => {
   }
 };
 
+export const getValidUserRoles = async (userId, unitId, timestamp) => {
+  try {
+    const params = {
+      userId,
+      unitId,
+      timestamp: encodeURIComponent(timestamp),
+    }; 
+    const response = await axios.get(apiUrl, params);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user role:', error);
+    throw error;
+  }
+};
+
 export const updateUserRole = async (id, apiVersion, userData) => {
   try {
     const response = await axios.put(`${apiUrl}/${id}?version=${apiVersion}`, userData);
