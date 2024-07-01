@@ -5,7 +5,7 @@ import Unit from './components/Unit';
 import UnitList from './components/UnitList';
 import UserForm from './components/UserForm';
 import UserList from './components/UserList';
-import UserRole from './components/UserRole';
+import UserRoleForm from './components/UserRoleForm';
 import UserRoleList from './components/UserRoleList';
 
 function App() {
@@ -44,8 +44,8 @@ function App() {
         <Route path="/users/:id" element={<UserForm />} />
 
         <Route path="/user-roles" element={<UserRoleList />} /> 
-        <Route path="/user-roles/new" element={<UserRole />} />
-        <Route path="/user-roles/:id" element={<UserRole />} /> 
+        <Route path="/user-roles/new" element={<UserRoleForm />} />
+        <Route path="/user-roles/:id" element={<UserRoleForm />} /> 
       </Routes>
     </main>
   );

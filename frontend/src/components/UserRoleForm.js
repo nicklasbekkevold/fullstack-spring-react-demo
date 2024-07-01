@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { createUserRole, getUserRoleById, updateUserRole } from '../services/user-role';
 
-const UserRoleList = () => {
+const UserRoleForm = () => {
   const { id } = useParams();
   const [apiVersion, setApiVersion] = useState(1);
   const [userRole, setUserRole] = useState({});  
@@ -99,4 +99,4 @@ const UserRoleList = () => {
   );
 };
 
-export default UserRoleList;
+export default UserRoleForm;

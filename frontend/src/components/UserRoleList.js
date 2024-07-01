@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUserRoles } from '../services/user-role';
 
-const UserList = () => {
+const UserRoleList = () => {
   const [userRoles, setUserRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -62,4 +62,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default UserRoleList;
