@@ -39,6 +39,7 @@ const UserForm = () => {
       setVersion('');
       setApiVersion('');
     } catch (error) {
+      setError(error);
       console.error('Error creating user:', error);
     }
   };
@@ -49,6 +50,8 @@ const UserForm = () => {
     try {
       await updateUser(id, apiVersion, userData);
     } catch (error) {
+      console.log(error)
+      setError(error);
       console.error('Error updating user:', error);
     }
   };
@@ -61,6 +64,7 @@ const UserForm = () => {
       setVersion('');
       setApiVersion('');
     } catch (error) {
+      setError(error);
       console.error('Error deleting user:', error);
     }
   };
@@ -68,7 +72,9 @@ const UserForm = () => {
   return (
     <div>
       {isLoading && <p>Loading user...</p>}
-      {error && <p>Error fetching user: {error.message}</p>}
+      {error && <p>An error occurred: {error.message}</p>}
+      {error?.response?.data && <p>{error.response.data.title}</p>}
+      {error?.response?.data && <p>{error.response.data.detail}</p>}
       {!isLoading && !error && (
         <form>
           {id && (

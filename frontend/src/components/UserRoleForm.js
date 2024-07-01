@@ -36,6 +36,7 @@ const UserRoleForm = () => {
       await createUserRole(userRole);
       setApiVersion('');
     } catch (error) {
+      setError(error);
       console.error('Error creating user:', error);
     }
   };
@@ -46,6 +47,7 @@ const UserRoleForm = () => {
     try {
       await updateUserRole(id, apiVersion, userRoleData);
     } catch (error) {
+      setError(error);
       console.error('Error updating user:', error);
     }
   };
@@ -53,7 +55,9 @@ const UserRoleForm = () => {
   return (
     <div>
       {isLoading && <p>Loading user role...</p>}
-      {error && <p>Error fetching user role: {error.message}</p>}
+      {error && <p>An error occurred: {error.message}</p>}
+      {error?.response?.data && <p>{error.response.data.title}</p>}
+      {error?.response?.data && <p>{error.response.data.detail}</p>}
       {!isLoading && !error && (
         <form>
           {id && (

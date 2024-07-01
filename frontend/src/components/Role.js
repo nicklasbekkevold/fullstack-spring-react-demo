@@ -27,7 +27,9 @@ const RoleList = () => {
   return (
     <div>
       {isLoading && <p>Loading role...</p>}
-      {error && <p>Error fetching role: {error.message}</p>}
+      {error && <p>An error occurred: {error.message}</p>}
+      {error?.response?.data && <p>{error.response.data.title}</p>}
+      {error?.response?.data && <p>{error.response.data.detail}</p>}
       {!isLoading && !error && (
         <table>
           <thead>

@@ -26,7 +26,9 @@ const UserList = () => {
   return (
     <div>
       {isLoading && <p>Loading roles...</p>}
-      {error && <p>Error fetching roles: {error.message}</p>}
+      {error && <p>An error occurred: {error.message}</p>}
+      {error?.response?.data && <p>{error.response.data.title}</p>}
+      {error?.response?.data && <p>{error.response.data.detail}</p>}
       {!isLoading && !error && (
         <table>
           <thead>
