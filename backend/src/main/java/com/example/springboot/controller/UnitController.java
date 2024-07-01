@@ -20,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/api/units")
 public class UnitController {
 
     private final UnitService service;
@@ -32,7 +33,7 @@ public class UnitController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/api/units")
+    @GetMapping
     public CollectionModel<EntityModel<Unit>> getAll() {
         List<EntityModel<Unit>> units = service.findAll().stream()
                 .map(assembler::toModel)
@@ -44,7 +45,7 @@ public class UnitController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/api/units/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getUnit(@PathVariable int id) {
         Optional<Unit> unit = service.findById(id);
 

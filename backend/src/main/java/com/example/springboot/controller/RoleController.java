@@ -20,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/api/roles")
 public class RoleController {
 
     private final RoleService service;
@@ -32,7 +33,7 @@ public class RoleController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/api/roles")
+    @GetMapping
     public CollectionModel<EntityModel<Role>> getAll() {
         List<EntityModel<Role>> roles = service.findAll().stream()
                 .map(assembler::toModel)
@@ -44,7 +45,7 @@ public class RoleController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/api/roles/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getRole(@PathVariable int id) {
         Optional<Role> role = service.findById(id);
 

@@ -21,6 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService service;
@@ -33,7 +34,7 @@ public class UserController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/api/users")
+    @GetMapping
     CollectionModel<EntityModel<User>> getAll() {
         List<EntityModel<User>> users = service.findAll().stream()
                 .map(assembler::toModel)
@@ -43,7 +44,7 @@ public class UserController {
     }
     // end::get-aggregate-root[]
 
-    @PostMapping("/api/users")
+    @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User newUser) {
         EntityModel<User> entityModel = assembler.toModel(service.save(newUser));
 
@@ -54,7 +55,7 @@ public class UserController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<?> getUser(@PathVariable int id) {
         Optional<User> user = service.findById(id);
 
@@ -71,7 +72,7 @@ public class UserController {
     }
     // end::get-single-item[]
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<?> updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
         Optional<User> existingUser = service.findById(id);
         if (existingUser.isEmpty()) {
@@ -103,7 +104,7 @@ public class UserController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/api/users/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?> deleteUser(@PathVariable int id, @RequestParam int version) {
         Optional<User> user = service.findById(id);
 

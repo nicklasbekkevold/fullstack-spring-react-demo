@@ -27,6 +27,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/api/user-roles")
 public class UserRoleController {
 
     private final UserRoleService service;
@@ -41,7 +42,7 @@ public class UserRoleController {
 
     // Aggregate root
     // tag::get-aggregate-root[]
-    @GetMapping("/api/user-roles")
+    @GetMapping
     CollectionModel<EntityModel<UserRole>> getAll() {
         List<EntityModel<UserRole>> userRoles = service.findAll().stream()
                 .map(assembler::toModel)
@@ -51,7 +52,7 @@ public class UserRoleController {
     }
     // end::get-aggregate-root[]
 
-    @PostMapping("/api/user-roles")
+    @PostMapping
     public ResponseEntity<?> createUserRole(@RequestBody UserRoleCreationDto userRoleDto) {
         if (
                 service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidFrom()) ||
@@ -96,7 +97,7 @@ public class UserRoleController {
 
     // Single item
     // tag::get-single-item[]
-    @GetMapping("/api/user-roles/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<?> getUserRole(@PathVariable int id) {
         Optional<UserRole> userRole = service.findById(id);
 
@@ -112,7 +113,7 @@ public class UserRoleController {
     }
     // end::get-single-item[]
 
-    @GetMapping(value = "/api/user-roles", params = {"userId", "unitId", "timestamp"})
+    @GetMapping(params = {"userId", "unitId", "timestamp"})
     CollectionModel<EntityModel<UserRole>> getValid(
             @RequestParam int userId,
             @RequestParam int unitId,
@@ -124,7 +125,7 @@ public class UserRoleController {
         return CollectionModel.of(userRoles, linkTo(methodOn(UserRoleController.class).getAll()).withSelfRel());
     }
 
-    @PutMapping("/api/user-roles/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<?> updateUserRole(@RequestBody UserRoleUpdateDto userRoleDto, @PathVariable int id, @RequestParam int version) {
         if (userRoleDto.getValidTo() != null && userRoleDto.getValidTo().isBefore(userRoleDto.getValidFrom())) {
             return ResponseEntity
