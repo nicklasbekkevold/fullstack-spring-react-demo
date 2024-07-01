@@ -13,9 +13,9 @@ const UserRoleForm = () => {
   useEffect(() => {
     console.log(id);
     if (id) {
-        const fetchData = async () => {
-          setIsLoading(true);
-          try {
+      const fetchData = async () => {
+        setIsLoading(true);
+        try {
           const fetchedUserRole = await getUserRoleById(id);
           setApiVersion(fetchedUserRole.version);
           

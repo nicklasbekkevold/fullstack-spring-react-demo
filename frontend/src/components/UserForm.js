@@ -8,22 +8,31 @@ const UserForm = () => {
   const [version, setVersion] = useState(1);
   const [name, setName] = useState('');
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     if (id) {
       const fetchData = async () => {
-        const fetchedUser = await getUserById(id);
-        setVersion(fetchedUser.version);
-        setApiVersion(fetchedUser.version);
-        setName(fetchedUser.name);
+        setIsLoading(true);
+        try {
+          const fetchedUser = await getUserById(id);
+          setApiVersion(fetchedUser.version);
+          setVersion(fetchedUser.version);
+          setName(fetchedUser.name);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setIsLoading(false);
+        }
       };
-      
       fetchData();
     }
   }, [id]);
 
   const handleCreateUser = async (event) => {
     event.preventDefault();
-    const userData = { name }; 
+    const userData = { name };
     try {
       await createUser(userData);
       setName('');
@@ -36,7 +45,7 @@ const UserForm = () => {
 
   const handleUpdateUser = async (event) => {
     event.preventDefault();
-    const userData = { version, name }; 
+    const userData = { version, name };
     try {
       await updateUser(id, apiVersion, userData);
     } catch (error) {
@@ -57,28 +66,46 @@ const UserForm = () => {
   };
 
   return (
-    <form>
-      {id && (
-        <>
-          <label htmlFor="version">Current version:</label>
-          <input type="text" id="apiVersion" value={apiVersion} onChange={(e) => setApiVersion(e.target.value)} />
-          <br/>
-          <br/>
-        </>
+    <div>
+      {isLoading && <p>Loading user...</p>}
+      {error && <p>Error fetching user: {error.message}</p>}
+      {!isLoading && !error && (
+        <form>
+          {id && (
+            <>
+              <label htmlFor="version">Current version:</label>
+              <input type="text" id="apiVersion" value={apiVersion} onChange={(e) => setApiVersion(e.target.value)} />
+              <br />
+              <br />
+            </>
+          )}
+          <table>
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Version</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr key={id}>
+                  <td>{id}</td>
+                  <td><input type="text" id="version" value={version} onChange={(e) => setVersion(e.target.value)} /></td>
+                  <td><input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} /></td>
+                </tr>
+            </tbody>
+          </table>
+          {id ? (
+            <>
+              <button onClick={handleUpdateUser} type="submit">Update</button>
+              <button onClick={handleDeleteUser} type="submit">Delete</button>
+            </>
+          ) : (
+            <button onClick={handleCreateUser} type="submit">Create</button>
+          )}
+        </form>
       )}
-      <label htmlFor="version">Version:</label>
-      <input type="text" id="version" value={version} onChange={(e) => setVersion(e.target.value)} />
-      <label htmlFor="name">Name:</label>
-      <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
-      {id ? (
-        <>
-          <button onClick={handleUpdateUser} type="submit">Update</button>
-          <button onClick={handleDeleteUser} type="submit">Delete</button>
-        </>
-      ) : (
-        <button onClick={handleCreateUser} type="submit">Create</button>
-      )}
-    </form>
+    </div>
   );
 };
 
