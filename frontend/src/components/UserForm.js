@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { createUser, getUserById, updateUser } from '../services/user';
+import { createUser, getUserById, updateUser, deleteUser } from '../services/user';
 
 const UserForm = () => {
   const { id } = useParams();
@@ -43,7 +43,19 @@ const UserForm = () => {
       setVersion('');
       setApiVersion('');
     } catch (error) {
-      console.error('Error updataing user:', error);
+      console.error('Error updating user:', error);
+    }
+  };
+
+  const handleDeleteUser = async (event) => {
+    event.preventDefault();
+    try {
+      await deleteUser(id, apiVersion);
+      setName('');
+      setVersion('');
+      setApiVersion('');
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 
@@ -62,7 +74,10 @@ const UserForm = () => {
       <label htmlFor="name">Name:</label>
       <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
       {id ? (
-        <button onClick={handleUpdateUser} type="submit">Update</button>
+        <>
+          <button onClick={handleUpdateUser} type="submit">Update</button>
+          <button onClick={handleDeleteUser} type="submit">Delete</button>
+        </>
       ) : (
         <button onClick={handleCreateUser} type="submit">Create</button>
       )}

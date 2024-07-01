@@ -44,3 +44,12 @@ export const updateUser = async (id, apiVersion, userData) => {
   }
 };
 
+export const deleteUser = async (id, apiVersion) => {
+  try {
+    const response = await axios.delete(`${apiUrl}/${id}?version=${apiVersion}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+};
