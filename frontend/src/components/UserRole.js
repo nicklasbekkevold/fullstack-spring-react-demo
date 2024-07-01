@@ -1,41 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getUserRoleById, updateUserRole } from '../services/user-role';
+import { createUserRole, getUserRoleById, updateUserRole } from '../services/user-role';
 
 const UserRoleList = () => {
   const { id } = useParams();
   const [apiVersion, setApiVersion] = useState(1);
-
   const [userRole, setUserRole] = useState({});  
-  const [validFrom, setValidFrom] = useState('');
-  const [validTo, setValidTo] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedUserRole = await getUserRoleById(id);
-        setApiVersion(fetchedUserRole.version);
-        setValidFrom(fetchedUserRole.validFrom)
-        setValidTo(fetchedUserRole.validTo)
-
-        setUserRole(fetchedUserRole);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
+    console.log(id);
+    if (id) {
+        const fetchData = async () => {
+          setIsLoading(true);
+          try {
+          const fetchedUserRole = await getUserRoleById(id);
+          setApiVersion(fetchedUserRole.version);
+          
+          setUserRole(fetchedUserRole);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchData();
+    }
   }, [id]);
+
+  const handleCreateUserRole = async (event) => {
+    event.preventDefault();
+    try {
+      await createUserRole(userRole);
+      setApiVersion('');
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
 
   const handleUpdateUserRole = async (event) => {
     event.preventDefault();
-    const userRoleData = { validFrom, validTo }; 
+    const userRoleData = { validFrom: userRole.validFrom, validTo: userRole.validTo }; 
     try {
       await updateUserRole(id, apiVersion, userRoleData);
     } catch (error) {
@@ -60,26 +67,32 @@ const UserRoleList = () => {
           <table>
             <thead>
               <tr>
-                <th>Id</th>
-                <th>Version</th>
+                {id && (<th>Id</th>)}
+                {id && (<th>Version</th>)}
                 <th>UserId</th>
                 <th>UnitId</th>
+                <th>RoleId</th>
                 <th>ValidFrom</th>
                 <th>ValidTo</th>
               </tr>
             </thead>
             <tbody>
               <tr key={userRole.id}>
-                  <td>{userRole.version}</td>
-                  <td>{userRole.user?.id}</td>
-                  <td>{userRole.unit?.id}</td>
-                  <td>{userRole.role?.id}</td>
-                  <td><input type="text" id="name" value={validFrom} onChange={(e) => setValidFrom(e.target.value)} /></td>
-                  <td><input type="text" id="name" value={validTo} onChange={(e) => setValidTo(e.target.value)} /></td>
+                  {id && (<td>{userRole.id}</td>)}
+                  {id && (<td>{userRole.version}</td>)}
+                  <td>{id ? userRole.user?.id : <input type="text" id="userId" defaultValue={userRole.userId} onChange={(e) => setUserRole({...userRole, userId: e.target.value})} />}</td>
+                  <td>{id ? userRole.unit?.id : <input type="text" id="unitId" defaultValue={userRole.unitId} onChange={(e) => setUserRole({...userRole, unitId: e.target.value})} />}</td>
+                  <td>{id ? userRole.role?.id : <input type="text" id="roleId" defaultValue={userRole.roleId} onChange={(e) => setUserRole({...userRole, roleId: e.target.value})} />}</td>
+                  <td><input type="text" id="validFrom" defaultValue={userRole.validFrom} onChange={(e) => setUserRole({...userRole, validFrom: e.target.value})} /></td>
+                  <td><input type="text" id="validTo" defaultValue={userRole.validTo} onChange={(e) => setUserRole({...userRole, validTo: e.target.value})} /></td>
               </tr>
             </tbody>
           </table>
-          <button onClick={handleUpdateUserRole} type="submit">Update</button>
+          { id ? (
+            <button onClick={handleUpdateUserRole} type="submit">Update</button>
+          ) : (
+            <button onClick={handleCreateUserRole} type="submit">Create</button>
+          )}
         </form>
       )}
     </div>

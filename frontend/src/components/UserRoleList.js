@@ -35,6 +35,7 @@ const UserList = () => {
               <th>Version</th>
               <th>UserId</th>
               <th>UnitId</th>
+              <th>RoleId</th>
               <th>ValidFrom</th>
               <th>ValidTo</th>
             </tr>
@@ -42,6 +43,7 @@ const UserList = () => {
           <tbody>
           {userRoles.map((userRole) => (
               <tr key={userRole.id}>
+                <td>{userRole.id}</td>
                 <td>{userRole.version}</td>
                 <td>{userRole.user.id}</td>
                 <td>{userRole.unit.id}</td>
@@ -49,7 +51,7 @@ const UserList = () => {
                 <td>{userRole.validFrom}</td>
                 <td>{userRole.validTo}</td>
                 <td>
-                  <Link to={`/user-roles/${userRole.id}`}>View</Link>
+                  <Link to={`/user-roles/${userRole.id}`}>Edit</Link>
                 </td>
               </tr>
             ))}

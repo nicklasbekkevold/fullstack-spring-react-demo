@@ -3,6 +3,16 @@ import axios from 'axios';
 const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 const apiUrl = `${baseUrl}/api/user-roles`
 
+export const createUserRole = async (userRoleData) => {
+  try {
+    const response = await axios.post(apiUrl, userRoleData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user role:', error);
+    throw error;
+  }
+};
+
 export const getUserRoles = async () => {
   try {
     const response = await axios.get(apiUrl);

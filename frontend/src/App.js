@@ -44,6 +44,7 @@ function App() {
         <Route path="/users/:id" element={<UserForm />} />
 
         <Route path="/user-roles" element={<UserRoleList />} /> 
+        <Route path="/user-roles/new" element={<UserRole />} />
         <Route path="/user-roles/:id" element={<UserRole />} /> 
       </Routes>
     </main>

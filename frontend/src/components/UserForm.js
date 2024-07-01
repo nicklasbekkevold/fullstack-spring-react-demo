@@ -39,9 +39,6 @@ const UserForm = () => {
     const userData = { version, name }; 
     try {
       await updateUser(id, apiVersion, userData);
-      setName('');
-      setVersion('');
-      setApiVersion('');
     } catch (error) {
       console.error('Error updating user:', error);
     }
