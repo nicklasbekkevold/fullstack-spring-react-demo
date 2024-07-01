@@ -22,3 +22,13 @@ export const getUserRoleById = async (id) => {
     throw error;
   }
 };
+
+export const updateUserRole = async (id, apiVersion, userData) => {
+  try {
+    const response = await axios.put(`${apiUrl}/${id}?version=${apiVersion}`, userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+};
