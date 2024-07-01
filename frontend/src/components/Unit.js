@@ -32,12 +32,14 @@ const UnitList = () => {
         <table>
           <thead>
             <tr>
+              <th>Id</th>
               <th>Version</th>
               <th>Name</th>
             </tr>
           </thead>
           <tbody>
             <tr key={unit.id}>
+              <td>{unit.id}</td>
               <td>{unit.version}</td>
               <td>{unit.name}</td>
             </tr>

@@ -31,6 +31,7 @@ const UserList = () => {
         <table>
           <thead>
             <tr>
+              <th>Id</th>
               <th>Version</th>
               <th>Name</th>
             </tr>
@@ -38,6 +39,7 @@ const UserList = () => {
           <tbody>
           {users.map((user) => (
               <tr key={user.id}>
+                <td>{user.id}</td>
                 <td>{user.version}</td>
                 <td>{user.name}</td>
                 <td>

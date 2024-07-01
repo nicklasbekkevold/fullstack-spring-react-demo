@@ -32,12 +32,14 @@ const RoleList = () => {
         <table>
           <thead>
             <tr>
+              <th>Id</th>
               <th>Version</th>
               <th>Name</th>
             </tr>
           </thead>
           <tbody>
             <tr key={role.id}>
+              <td>{role.id}</td>
               <td>{role.version}</td>
               <td>{role.name}</td>
             </tr>
