@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getUsers } from '../services/user';
+import { getUnits } from '../services/unit';
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
+  const [units, setUnits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -11,8 +11,8 @@ const UserList = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const { _embedded: embedded } = await getUsers();
-        setUsers(embedded.userList);
+        const { _embedded: embedded } = await getUnits();
+        setUnits(embedded.unitList);
       } catch (error) {
         setError(error);
       } finally {
@@ -25,8 +25,8 @@ const UserList = () => {
 
   return (
     <div>
-      {isLoading && <p>Loading users...</p>}
-      {error && <p>Error fetching users: {error.message}</p>}
+      {isLoading && <p>Loading units...</p>}
+      {error && <p>Error fetching units: {error.message}</p>}
       {!isLoading && !error && (
         <table>
           <thead>
@@ -36,12 +36,12 @@ const UserList = () => {
             </tr>
           </thead>
           <tbody>
-          {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.version}</td>
-                <td>{user.name}</td>
+          {units.map((unit) => (
+              <tr key={unit.id}>
+                <td>{unit.version}</td>
+                <td>{unit.name}</td>
                 <td>
-                  <Link to={`/users/${user.id}`}>Edit</Link>
+                  <Link to={`/units/${unit.id}`}>View</Link>
                 </td>
               </tr>
             ))}
