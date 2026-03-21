@@ -13,6 +13,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
             .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
             .formLogin(form -> form.disable())
             .csrf(csrf -> csrf.disable());
