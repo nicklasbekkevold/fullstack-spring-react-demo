@@ -1,4 +1,4 @@
-FROM maven:3.8.4-openjdk-17 AS build
+FROM maven:3.9-eclipse-temurin-25 AS build
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY ./src /app/src
 
 RUN mvn clean package -Dmaven.test.skip=true
 
-FROM openjdk:17-jdk
+FROM eclipse-temurin:25-jdk
 
 WORKDIR /app
 
