@@ -1,10 +1,7 @@
-version: '3'
 services:
-
   spring-boot-app:
     build:
       context: backend
-      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     network_mode: host
@@ -12,7 +9,6 @@ services:
   react-app:
     build:
       context: frontend
-      dockerfile: Dockerfile
     ports:
       - "3000:80"
     restart: on-failure
