@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getValidUserRoles } from '../services/user-role';
+import { AxiosError } from 'axios';
+import { getValidUserRoles } from '@/services/user-role';
+import { UserRole } from '@/types';
 
-const UserRoleList = () => {
+type ApiError = AxiosError<{ title: string; detail: string }>;
+
+const UserRoleSearch = () => {
   const [userId, setUserId] = useState('');
   const [unitId, setUnitId] = useState('');
-  const [timestamp, setTimestamp] = useState(new Date().toISOString().split('.')[0]+"Z");
-  const [userRoles, setUserRoles] = useState([]);
+  const [timestamp, setTimestamp] = useState(new Date().toISOString().split('.')[0] + 'Z');
+  const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   const handleSearch = async () => {
     setIsLoading(true);
@@ -17,8 +21,8 @@ const UserRoleList = () => {
     try {
       const response = await getValidUserRoles(userId, unitId, timestamp);
       setUserRoles(response._embedded.userRoleList);
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      setError(err as ApiError);
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +38,7 @@ const UserRoleList = () => {
         <input type="text" id="unitId" value={unitId} onChange={(e) => setUnitId(e.target.value)} />
 
         <label htmlFor="timestamp">Timestamp:</label>
-        <input type="text" id="timestamp" value={timestamp} onChange={(e) => setTimestamp(e.target.value)}/>
+        <input type="text" id="timestamp" value={timestamp} onChange={(e) => setTimestamp(e.target.value)} />
 
         <button type="submit" disabled={isLoading} onClick={handleSearch}>
           {isLoading ? 'Searching...' : 'Search'}
@@ -80,4 +84,4 @@ const UserRoleList = () => {
   );
 };
 
-export default UserRoleList;
+export default UserRoleSearch;

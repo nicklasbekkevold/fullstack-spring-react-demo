@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getUnits } from '../services/unit';
+import { AxiosError } from 'axios';
+import { getRoles } from '@/services/role';
+import { Role } from '@/types';
 
-const UserList = () => {
-  const [units, setUnits] = useState([]);
+type ApiError = AxiosError<{ title: string; detail: string }>;
+
+const RoleList = () => {
+  const [roles, setRoles] = useState<Role[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const { _embedded: embedded } = await getUnits();
-        setUnits(embedded.unitList);
-      } catch (error) {
-        setError(error);
+        const { _embedded: embedded } = await getRoles();
+        setRoles(embedded.roleList);
+      } catch (err) {
+        setError(err as ApiError);
       } finally {
         setIsLoading(false);
       }
@@ -25,7 +29,7 @@ const UserList = () => {
 
   return (
     <div>
-      {isLoading && <p>Loading units...</p>}
+      {isLoading && <p>Loading roles...</p>}
       {error && <p>An error occurred: {error.message}</p>}
       {error?.response?.data && <p>{error.response.data.title}</p>}
       {error?.response?.data && <p>{error.response.data.detail}</p>}
@@ -39,13 +43,13 @@ const UserList = () => {
             </tr>
           </thead>
           <tbody>
-          {units.map((unit) => (
-              <tr key={unit.id}>
-                <td>{unit.id}</td>
-                <td>{unit.version}</td>
-                <td>{unit.name}</td>
+            {roles.map((role) => (
+              <tr key={role.id}>
+                <td>{role.id}</td>
+                <td>{role.version}</td>
+                <td>{role.name}</td>
                 <td>
-                  <Link to={`/units/${unit.id}`}>View</Link>
+                  <Link to={`/roles/${role.id}`}>View</Link>
                 </td>
               </tr>
             ))}
@@ -56,4 +60,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default RoleList;

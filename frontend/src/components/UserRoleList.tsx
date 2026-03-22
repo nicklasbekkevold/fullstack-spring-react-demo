@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getUserRoles } from '../services/user-role';
+import { AxiosError } from 'axios';
+import { getUserRoles } from '@/services/user-role';
+import { UserRole } from '@/types';
+
+type ApiError = AxiosError<{ title: string; detail: string }>;
 
 const UserRoleList = () => {
-  const [userRoles, setUserRoles] = useState([]);
+  const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,8 +17,8 @@ const UserRoleList = () => {
       try {
         const { _embedded: embedded } = await getUserRoles();
         setUserRoles(embedded.userRoleList);
-      } catch (error) {
-        setError(error);
+      } catch (err) {
+        setError(err as ApiError);
       } finally {
         setIsLoading(false);
       }
@@ -43,7 +47,7 @@ const UserRoleList = () => {
             </tr>
           </thead>
           <tbody>
-          {userRoles.map((userRole) => (
+            {userRoles.map((userRole) => (
               <tr key={userRole.id}>
                 <td>{userRole.id}</td>
                 <td>{userRole.version}</td>

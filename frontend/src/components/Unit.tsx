@@ -1,32 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getRoleById } from '../services/role';
+import { AxiosError } from 'axios';
+import { getUnitById } from '@/services/unit';
+import { Unit } from '@/types';
 
-const RoleList = () => {
-  const { id } = useParams();
-  const [role, setRole] = useState({});
+type ApiError = AxiosError<{ title: string; detail: string }>;
+
+const UnitView = () => {
+  const { id } = useParams<{ id: string }>();
+  const [unit, setUnit] = useState<Partial<Unit>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const fetchedRole = await getRoleById(id);
-        setRole(fetchedRole);
-      } catch (error) {
-        setError(error);
+        const fetchedUnit = await getUnitById(id!);
+        setUnit(fetchedUnit);
+      } catch (err) {
+        setError(err as ApiError);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, [id]);
 
   return (
     <div>
-      {isLoading && <p>Loading role...</p>}
+      {isLoading && <p>Loading unit...</p>}
       {error && <p>An error occurred: {error.message}</p>}
       {error?.response?.data && <p>{error.response.data.title}</p>}
       {error?.response?.data && <p>{error.response.data.detail}</p>}
@@ -40,10 +44,10 @@ const RoleList = () => {
             </tr>
           </thead>
           <tbody>
-            <tr key={role.id}>
-              <td>{role.id}</td>
-              <td>{role.version}</td>
-              <td>{role.name}</td>
+            <tr key={unit.id}>
+              <td>{unit.id}</td>
+              <td>{unit.version}</td>
+              <td>{unit.name}</td>
             </tr>
           </tbody>
         </table>
@@ -52,4 +56,4 @@ const RoleList = () => {
   );
 };
 
-export default RoleList;
+export default UnitView;

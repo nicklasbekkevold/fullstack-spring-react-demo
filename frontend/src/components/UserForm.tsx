@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { createUser, getUserById, updateUser, deleteUser } from '../services/user';
+import { AxiosError } from 'axios';
+import { createUser, getUserById, updateUser, deleteUser } from '@/services/user';
+
+type ApiError = AxiosError<{ title: string; detail: string }>;
 
 const UserForm = () => {
-  const { id } = useParams();
-  const [apiVersion, setApiVersion] = useState(1);
-  const [version, setVersion] = useState(1);
+  const { id } = useParams<{ id: string }>();
+  const [apiVersion, setApiVersion] = useState<number | string>(1);
+  const [version, setVersion] = useState<number | string>(1);
   const [name, setName] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -20,8 +23,8 @@ const UserForm = () => {
           setApiVersion(fetchedUser.version);
           setVersion(fetchedUser.version);
           setName(fetchedUser.name);
-        } catch (error) {
-          setError(error);
+        } catch (err) {
+          setError(err as ApiError);
         } finally {
           setIsLoading(false);
         }
@@ -30,7 +33,7 @@ const UserForm = () => {
     }
   }, [id]);
 
-  const handleCreateUser = async (event) => {
+  const handleCreateUser = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const userData = { name };
     try {
@@ -38,34 +41,34 @@ const UserForm = () => {
       setName('');
       setVersion('');
       setApiVersion('');
-    } catch (error) {
-      setError(error);
-      console.error('Error creating user:', error);
+    } catch (err) {
+      setError(err as ApiError);
+      console.error('Error creating user:', err);
     }
   };
 
-  const handleUpdateUser = async (event) => {
+  const handleUpdateUser = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const userData = { version, name };
     try {
-      await updateUser(id, apiVersion, userData);
-    } catch (error) {
-      console.log(error)
-      setError(error);
-      console.error('Error updating user:', error);
+      await updateUser(id!, apiVersion, userData);
+    } catch (err) {
+      console.log(err);
+      setError(err as ApiError);
+      console.error('Error updating user:', err);
     }
   };
 
-  const handleDeleteUser = async (event) => {
+  const handleDeleteUser = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
-      await deleteUser(id, apiVersion);
+      await deleteUser(id!, apiVersion);
       setName('');
       setVersion('');
       setApiVersion('');
-    } catch (error) {
-      setError(error);
-      console.error('Error deleting user:', error);
+    } catch (err) {
+      setError(err as ApiError);
+      console.error('Error deleting user:', err);
     }
   };
 
@@ -94,11 +97,11 @@ const UserForm = () => {
               </tr>
             </thead>
             <tbody>
-                <tr key={id}>
-                  <td>{id}</td>
-                  <td><input type="text" id="version" value={version} onChange={(e) => setVersion(e.target.value)} /></td>
-                  <td><input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} /></td>
-                </tr>
+              <tr key={id}>
+                <td>{id}</td>
+                <td><input type="text" id="version" value={version} onChange={(e) => setVersion(e.target.value)} /></td>
+                <td><input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} /></td>
+              </tr>
             </tbody>
           </table>
           {id ? (

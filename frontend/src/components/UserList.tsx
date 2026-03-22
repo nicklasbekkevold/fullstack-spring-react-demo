@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getUsers } from '../services/user';
+import { AxiosError } from 'axios';
+import { getUsers } from '@/services/user';
+import { User } from '@/types';
+
+type ApiError = AxiosError<{ title: string; detail: string }>;
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,8 +17,8 @@ const UserList = () => {
       try {
         const { _embedded: embedded } = await getUsers();
         setUsers(embedded.userList);
-      } catch (error) {
-        setError(error);
+      } catch (err) {
+        setError(err as ApiError);
       } finally {
         setIsLoading(false);
       }
@@ -39,7 +43,7 @@ const UserList = () => {
             </tr>
           </thead>
           <tbody>
-          {users.map((user) => (
+            {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.version}</td>
