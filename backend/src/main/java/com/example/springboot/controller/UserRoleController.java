@@ -117,9 +117,9 @@ public class UserRoleController {
 
     @GetMapping(params = {"userId", "unitId", "timestamp"})
     CollectionModel<EntityModel<UserRole>> getValid(
-            @RequestParam int userId,
-            @RequestParam int unitId,
-            @RequestParam("timestamp") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant timestamp
+            @RequestParam(required = false) int userId,
+            @RequestParam(required = false) int unitId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant timestamp
     ) {
         List<EntityModel<UserRole>> userRoles = service.findValidUserRoles(userId, unitId, timestamp).stream()
                 .map(assembler::toModel)
