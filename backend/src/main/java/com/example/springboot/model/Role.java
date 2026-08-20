@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @SequenceGenerator(name="role_id_generator", initialValue=101, allocationSize=100)
-public class Role {
+public class Role extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="role_id_generator")

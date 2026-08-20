@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @SequenceGenerator(name="user_id_generator", allocationSize=100)
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_generator")
@@ -19,7 +19,7 @@ public class User {
     private int version = 1;
     private String name;
 
-    private User() { }
+    public User() { }
 
     public User(int version, String name) {
         this.version = version;
