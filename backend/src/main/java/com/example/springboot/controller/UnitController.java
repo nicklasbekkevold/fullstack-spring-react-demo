@@ -3,6 +3,7 @@ package com.example.springboot.controller;
 
 import com.example.springboot.model.Unit;
 import com.example.springboot.service.UnitService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Tag(name = "Units")
 @RestController
 @RequestMapping("/api/units")
 public class UnitController {

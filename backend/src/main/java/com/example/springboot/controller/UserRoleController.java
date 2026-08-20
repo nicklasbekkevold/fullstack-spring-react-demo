@@ -6,6 +6,7 @@ import com.example.springboot.dto.UserRoleCreationMapper;
 import com.example.springboot.dto.UserRoleUpdateDto;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.service.UserRoleService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Tag(name = "User roles")
 @RestController
 @RequestMapping("/api/user-roles")
 public class UserRoleController {

@@ -3,6 +3,7 @@ package com.example.springboot.controller;
 
 import com.example.springboot.model.User;
 import com.example.springboot.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Tag(name = "Users")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

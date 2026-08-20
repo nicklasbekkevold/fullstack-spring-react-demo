@@ -3,6 +3,7 @@ package com.example.springboot.controller;
 
 import com.example.springboot.model.Role;
 import com.example.springboot.service.RoleService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Tag(name = "Roles")
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
