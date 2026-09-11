@@ -6,15 +6,13 @@ import com.example.springboot.service.UnitService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.mediatype.problem.Problem;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -48,19 +46,8 @@ public class UnitController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUnit(@PathVariable int id) {
-        Optional<Unit> unit = service.findById(id);
-
-        if (unit.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                    .body(Problem.create()
-                            .withTitle("Not found")
-                            .withDetail("Could not find unit with id %d".formatted(id)));
-
-        }
-        return ResponseEntity.ok(assembler.toModel(unit.get()));
+    public ResponseEntity<EntityModel<Unit>> getUnit(@PathVariable int id) {
+        return ResponseEntity.ok(assembler.toModel(service.findById(id)));
     }
     // end::get-single-item[]
 

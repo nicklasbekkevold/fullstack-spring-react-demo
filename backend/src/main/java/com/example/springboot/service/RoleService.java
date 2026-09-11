@@ -1,19 +1,17 @@
 package com.example.springboot.service;
 
+import com.example.springboot.exceptions.ResourceNotFoundException;
 import com.example.springboot.model.Role;
 import com.example.springboot.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RoleService {
 
     private final RoleRepository repository;
 
-    @Autowired
     public RoleService(RoleRepository repository) {
         this.repository = repository;
     }
@@ -22,13 +20,9 @@ public class RoleService {
         return repository.findAll();
     }
 
-    public Optional<Role> findById(int id) {
-        return repository.findById(id);
+    public Role findById(int id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role with ID %d could not be found".formatted(id)));
     }
 
-    public Role save(Role user) {
-        return repository.save(user);
-    }
-
-    public Role deleteById(Role user) { return repository.save(user); }
 }

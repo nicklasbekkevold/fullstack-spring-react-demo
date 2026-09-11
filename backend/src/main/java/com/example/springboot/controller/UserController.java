@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -59,49 +58,29 @@ public class UserController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/{id}")
-    ResponseEntity<?> getUser(@PathVariable int id) {
-        Optional<User> user = service.findById(id);
-
-        if (user.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                    .body(Problem.create()
-                            .withTitle("Not found")
-                            .withDetail("Could not find user with id %d".formatted(id)));
-
-        }
-        return ResponseEntity.ok(assembler.toModel(user.get()));
+    ResponseEntity<EntityModel<User>> getUser(@PathVariable int id) {
+        return ResponseEntity.ok(assembler.toModel(service.findById(id)));
     }
     // end::get-single-item[]
 
     @PutMapping("/{id}")
     ResponseEntity<?> updateUser(@RequestBody User newUser, @PathVariable int id, @RequestParam int version) {
-        Optional<User> existingUser = service.findById(id);
-        if (existingUser.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                    .body(Problem.create()
-                            .withTitle("Not found")
-                            .withDetail("Could not find user with id %d".formatted(id)));
+        User existingUser = service.findById(id);
 
-        }
-
-        if (version != existingUser.get().getVersion()) {
+        if (version != existingUser.getVersion()) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .body(Problem.create()
                             .withTitle("Method not allowed")
-                            .withDetail("Specified version %d does not match current version %d".formatted(version, existingUser.get().getVersion())));
+                            .withDetail("Specified version %d does not match current version %d".formatted(version, existingUser.getVersion())));
         }
 
-        existingUser.get().setName(newUser.getName());
-        existingUser.get().setVersion(newUser.getVersion());
-        service.save(existingUser.get());
+        existingUser.setName(newUser.getName());
+        existingUser.setVersion(newUser.getVersion());
+        service.save(existingUser);
 
-        EntityModel<User> entityModel = assembler.toModel(existingUser.get());
+        EntityModel<User> entityModel = assembler.toModel(existingUser);
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
@@ -109,25 +88,15 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteUser(@PathVariable int id, @RequestParam int version) {
-        Optional<User> user = service.findById(id);
+        User user = service.findById(id);
 
-        if (user.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                    .body(Problem.create()
-                            .withTitle("Not found")
-                            .withDetail("Could not find user with id %d".formatted(id)));
-
-        }
-
-        if (version != user.get().getVersion()) {
+        if (version != user.getVersion()) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .body(Problem.create()
                             .withTitle("Method not allowed")
-                            .withDetail("Specified version %d does not match current version %d".formatted(version, user.get().getVersion())));
+                            .withDetail("Specified version %d does not match current version %d".formatted(version, user.getVersion())));
         }
 
         if (!service.existsByIdAndUserRolesIsEmpty(id)) {

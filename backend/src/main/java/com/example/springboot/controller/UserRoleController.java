@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -58,8 +57,8 @@ public class UserRoleController {
     public ResponseEntity<?> createUserRole(@RequestBody UserRoleCreationDto userRoleDto) {
         if (
                 service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidFrom()) ||
-                (userRoleDto.getValidTo() != null && service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidTo())) ||
-                (userRoleDto.getValidTo() == null && service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), Instant.MAX))
+                        (userRoleDto.getValidTo() != null && service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), userRoleDto.getValidTo())) ||
+                        (userRoleDto.getValidTo() == null && service.exists(userRoleDto.getUserId(), userRoleDto.getUnitId(), userRoleDto.getRoleId(), Instant.MAX))
         ) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -100,18 +99,8 @@ public class UserRoleController {
     // Single item
     // tag::get-single-item[]
     @GetMapping("/{id}")
-    ResponseEntity<?> getUserRole(@PathVariable int id) {
-        Optional<UserRole> userRole = service.findById(id);
-
-        if (userRole.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                    .body(Problem.create()
-                            .withTitle("Not found")
-                            .withDetail("Could not find user role with id %d".formatted(id)));
-        }
-        return ResponseEntity.ok(assembler.toModel(userRole.get()));
+    ResponseEntity<EntityModel<UserRole>> getUserRole(@PathVariable int id) {
+        return ResponseEntity.ok(assembler.toModel(service.findById(id)));
     }
     // end::get-single-item[]
 
@@ -138,7 +127,7 @@ public class UserRoleController {
                             .withDetail("validTo is before validFrom"));
         }
 
-        UserRole userRole = service.findById(id).orElseThrow();
+        UserRole userRole = service.findById(id);
         if (version != userRole.getVersion()) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -150,8 +139,8 @@ public class UserRoleController {
 
         if (
                 service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), userRoleDto.getValidFrom()) ||
-                (userRoleDto.getValidTo() != null && service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), userRoleDto.getValidTo())) ||
-                (userRoleDto.getValidTo() == null && service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), Instant.MAX))
+                        (userRoleDto.getValidTo() != null && service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), userRoleDto.getValidTo())) ||
+                        (userRoleDto.getValidTo() == null && service.exists(userRole.getUser().getId(), userRole.getUnit().getId(), userRole.getRole().getId(), Instant.MAX))
         ) {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
