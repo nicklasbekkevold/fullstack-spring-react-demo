@@ -1,10 +1,14 @@
 package com.example.springboot.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@NoArgsConstructor
 @Entity(name = "units")
 @SequenceGenerator(name = "unit_id_generator", initialValue = 11, allocationSize = 100)
 public class Unit extends Auditable {
@@ -19,9 +23,6 @@ public class Unit extends Auditable {
     private int version = 1;
     private String name;
 
-    public Unit() {
-    }
-
     public Unit(int version, String name) {
         this.version = version;
         this.name = name;
@@ -31,29 +32,16 @@ public class Unit extends Auditable {
         this(1, name);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Unit unit = (Unit) o;
-        return getId() == unit.getId();
+        if (!(o instanceof Unit unit)) return false;
+        return this.id == unit.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(id);
     }
 
     @Override

@@ -1,10 +1,14 @@
 package com.example.springboot.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.Objects;
 
+@Getter
+@NoArgsConstructor
 @Entity(name = "user_roles")
 @SequenceGenerator(name = "user_role_id_generator", initialValue = 1001, allocationSize = 100)
 public class UserRole extends Auditable {
@@ -27,14 +31,9 @@ public class UserRole extends Auditable {
     @JoinColumn(name = "roleId", nullable = false)
     private Role role;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private Instant validFrom;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private Instant validTo;
-
-    public UserRole() {
-    }
 
     public UserRole(int version, User user, Unit unit, Role role, Instant validFrom, Instant validTo) {
         this.version = version;
@@ -49,41 +48,12 @@ public class UserRole extends Auditable {
         this(1, user, unit, role, validFrom, validTo);
     }
 
-
-    public int getId() {
-        return id;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
     public void setVersion(int version) {
         this.version = version;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public Unit getUnit() {
-        return unit;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public Instant getValidFrom() {
-        return validFrom;
-    }
-
     public void setValidFrom(Instant validFrom) {
         this.validFrom = validFrom == null ? Instant.now() : validFrom;
-    }
-
-    public Instant getValidTo() {
-        return validTo;
     }
 
     public void setValidTo(Instant validTo) {
@@ -93,14 +63,13 @@ public class UserRole extends Auditable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserRole userRole = (UserRole) o;
-        return getId() == userRole.getId();
+        if (!(o instanceof UserRole userRole)) return false;
+        return this.id == userRole.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(id);
     }
 
     @Override
