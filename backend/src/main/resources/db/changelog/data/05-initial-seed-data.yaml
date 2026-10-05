@@ -1,0 +1,222 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20261005-seed-initial-data
+      author: nicklasbekkevold
+      changes:
+        # --- Seed Roles ---
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: name, value: "User administration" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: name, value: "Endoscopist administration" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: name, value: "Report colonoscopy capacity" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: name, value: "Send invitations" }
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, valueNumeric: 5 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: name, value: "View statistics" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        # --- Seed Units ---
+        - insert:
+            tableName: units
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: name, value: "Kreftregisteret" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: units
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: name, value: "Akershus universitetssykehus HF" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: units
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: name, value: "Sørlandet sykehus HF" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: units
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: name, value: "Vestre Viken HF" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        # --- Seed Users ---
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: name, value: "Alice" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: name, value: "Bob" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: name, value: "Eve" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        # --- Seed User Roles ---
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: unit_id, valueNumeric: 1 }
+              - column: { name: role_id, valueNumeric: 1 }
+              - column: { name: valid_from, value: "2019-01-02 00:00:00" }
+              - column: { name: valid_to, value: "2019-12-31 23:59:59" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: unit_id, valueNumeric: 1 }
+              - column: { name: role_id, valueNumeric: 4 }
+              - column: { name: valid_from, value: "2019-01-02 00:00:00" }
+              - column: { name: valid_to, value: "2019-12-31 23:59:59" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: unit_id, valueNumeric: 1 }
+              - column: { name: role_id, valueNumeric: 5 }
+              - column: { name: valid_from, value: "2019-06-11 00:00:00" }
+              - column: { name: valid_to, value: "2019-12-31 23:59:59" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: version, valueNumeric: 2 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: unit_id, valueNumeric: 2 }
+              - column: { name: role_id, valueNumeric: 1 }
+              - column: { name: valid_from, value: "2020-01-28 00:00:00" }
+              - column: { name: valid_to, value: "2019-12-31 23:59:59" }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 5 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: unit_id, valueNumeric: 2 }
+              - column: { name: role_id, valueNumeric: 5 }
+              - column: { name: valid_from, value: "2020-01-28 00:00:00" }
+              - column: { name: valid_to, type: datetime } # handles null value explicitly
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 6 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: unit_id, valueNumeric: 4 }
+              - column: { name: role_id, valueNumeric: 1 }
+              - column: { name: valid_from, value: "2020-01-28 00:00:00" }
+              - column: { name: valid_to, type: datetime }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 7 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: unit_id, valueNumeric: 4 }
+              - column: { name: role_id, valueNumeric: 2 }
+              - column: { name: valid_from, value: "2020-01-28 00:00:00" }
+              - column: { name: valid_to, type: datetime }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 8 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: unit_id, valueNumeric: 1 }
+              - column: { name: role_id, valueNumeric: 1 }
+              - column: { name: valid_from, value: "2020-02-01 07:00:00" }
+              - column: { name: valid_to, type: datetime }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: id, valueNumeric: 9 }
+              - column: { name: version, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: unit_id, valueNumeric: 1 }
+              - column: { name: role_id, valueNumeric: 4 }
+              - column: { name: valid_from, value: "2020-02-01 07:00:00" }
+              - column: { name: valid_to, type: datetime }
+              - column: { name: created_by, value: "system" }
+              - column: { name: updated_by, value: "system" }

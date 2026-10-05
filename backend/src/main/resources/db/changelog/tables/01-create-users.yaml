@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20261005-create-user-table
+      author: nicklasbekkevold
+      changes:
+        - createSequence:
+            sequenceName: user_id_generator
+            startValue: 1
+            incrementBy: 100
+
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_on
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: varchar(255)
+              - column:
+                  name: updated_on
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP

@@ -5,12 +5,12 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@SequenceGenerator(name="unit_id_generator", initialValue=11, allocationSize=100)
+@Entity(name = "units")
+@SequenceGenerator(name = "unit_id_generator", initialValue = 11, allocationSize = 100)
 public class Unit extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="unit_id_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "unit_id_generator")
     private int id;
 
     @OneToMany(mappedBy = "unit")
@@ -19,7 +19,8 @@ public class Unit extends Auditable {
     private int version = 1;
     private String name;
 
-    public Unit() { }
+    public Unit() {
+    }
 
     public Unit(int version, String name) {
         this.version = version;

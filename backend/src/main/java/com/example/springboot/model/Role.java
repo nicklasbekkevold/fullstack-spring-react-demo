@@ -5,12 +5,12 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@SequenceGenerator(name="role_id_generator", initialValue=101, allocationSize=100)
+@Entity(name = "roles")
+@SequenceGenerator(name = "role_id_generator", initialValue = 101, allocationSize = 100)
 public class Role extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="role_id_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_generator")
     private int id;
 
     @OneToMany(mappedBy = "role")
@@ -19,7 +19,8 @@ public class Role extends Auditable {
     private int version = 1;
     private String name;
 
-    public Role() { }
+    public Role() {
+    }
 
     public Role(int version, String name) {
         this.version = version;

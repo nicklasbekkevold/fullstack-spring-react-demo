@@ -1,0 +1,82 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20261005-create-user-roles-table
+      author: nicklasbekkevold
+      changes:
+        - createSequence:
+            sequenceName: user_role_id_generator
+            startValue: 1001
+            incrementBy: 100
+
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  defaultValue: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: valid_from
+                  type: timestamp with time zone
+              - column:
+                  name: valid_to
+                  type: timestamp with time zone
+
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_on
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: varchar(255)
+              - column:
+                  name: updated_on
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_role_user
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: unit_id
+            referencedTableName: units
+            referencedColumnNames: id
+            constraintName: fk_user_role_unit
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fk_user_role_role

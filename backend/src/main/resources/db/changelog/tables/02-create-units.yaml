@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20261005-create-units-table
+      author: generator
+      changes:
+        - createSequence:
+            sequenceName: unit_id_generator
+            startValue: 11
+            incrementBy: 100
+
+        - createTable:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  defaultValue: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_on
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: varchar(255)
+              - column:
+                  name: updated_on
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP

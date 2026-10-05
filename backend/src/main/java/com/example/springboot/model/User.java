@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@SequenceGenerator(name="user_id_generator", allocationSize=100)
+@Entity(name = "users")
+@SequenceGenerator(name = "user_id_generator", allocationSize = 100)
 public class User extends Auditable {
 
     @Id
@@ -19,7 +19,8 @@ public class User extends Auditable {
     private int version = 1;
     private String name;
 
-    public User() { }
+    public User() {
+    }
 
     public User(int version, String name) {
         this.version = version;

@@ -5,26 +5,26 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
-@Entity
-@SequenceGenerator(name="user_role_id_generator", initialValue=1001, allocationSize=100)
+@Entity(name = "user_roles")
+@SequenceGenerator(name = "user_role_id_generator", initialValue = 1001, allocationSize = 100)
 public class UserRole extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_role_id_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_id_generator")
     private int id;
 
     private int version = 1;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name="userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name="unitId", nullable = false)
+    @JoinColumn(name = "unitId", nullable = false)
     private Unit unit;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name="roleId", nullable = false)
+    @JoinColumn(name = "roleId", nullable = false)
     private Role role;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -33,7 +33,8 @@ public class UserRole extends Auditable {
     @Temporal(TemporalType.TIMESTAMP)
     private Instant validTo;
 
-    public UserRole() { }
+    public UserRole() {
+    }
 
     public UserRole(int version, User user, Unit unit, Role role, Instant validFrom, Instant validTo) {
         this.version = version;
